@@ -210,8 +210,8 @@ const stats = computed(() => getDashboardStats())
 const allLeads = computed(() => getLeads())
 
 const filterPeriods = [
-  { label: 'Última Sem', value: '7' },
-  { label: 'Últimas 2W', value: '14' },
+  { label: 'Última Semana', value: '7' },
+  { label: 'Últimos 30 dias', value: '14' },
   { label: 'Último mês', value: '30' },
   { label: 'Este mês', value: 'current' }
 ]
