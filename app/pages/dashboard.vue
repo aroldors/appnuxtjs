@@ -1,12 +1,18 @@
 <template>
   <NuxtLayout name="default-layout">
-    <div class="space-y-6">
-      <!-- Header com filtros -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-4">
+    <div class="space-y-4">
+      <!-- Titulo do dashboard -->
+      <div class="bg-transparent px-0 pb-2">
+        <div class="mb-4">
           <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <span class="text-sm text-gray-500">Visão geral do desempenho em vendas</span>
+        </div>
+      </div>
+
+      <!-- Header com filtros -->
+      <div class="bg-transparent px-0 pt-4">
+        <div class="flex items-center justify-between mb-4">
           <div class="flex items-center space-x-2">
-            <span class="text-sm text-gray-500 mr-3">Últimas semanas / Últimas 30 dias / Últimas horas / Este mês</span>
             <button 
               v-for="period in filterPeriods" 
               :key="period.value"
@@ -15,7 +21,7 @@
                 'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
                 selectedPeriod === period.value 
                   ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
               ]"
             >
               {{ period.label }}
