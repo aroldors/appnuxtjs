@@ -4,43 +4,99 @@
       <!-- Header com filtros -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">Visão Geral</h2>
-          <div class="flex items-center space-x-3">
-            <select v-model="selectedPeriod" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-              <option value="7">Últimos 7 dias</option>
-              <option value="30">Últimos 30 dias</option>
-              <option value="90">Últimos 3 meses</option>
-            </select>
+          <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-500 mr-3">Últimas semanas / Últimas 30 dias / Últimas horas / Este mês</span>
+            <button 
+              v-for="period in filterPeriods" 
+              :key="period.value"
+              @click="selectedPeriod = period.value"
+              :class="[
+                'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+                selectedPeriod === period.value 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]"
+            >
+              {{ period.label }}
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Cards de estatísticas -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Total de Leads"
-          :value="stats.totalLeads"
-          icon="users"
-          color="blue"
-        />
-        <StatsCard
-          title="Leads Convertidos"
-          :value="stats.convertedLeads"
-          icon="check-circle"
-          color="green"
-        />
-        <StatsCard
-          title="Taxa de Conversão"
-          :value="`${stats.conversionRate}%`"
-          icon="trending-up"
-          color="purple"
-        />
-        <StatsCard
-          title="Receita Gerada"
-          :value="formatCurrency(stats.revenue)"
-          icon="currency-dollar"
-          color="yellow"
-        />
+        <!-- Total de Leads -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center space-x-2 mb-1">
+                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span class="text-sm text-gray-600">Total de Leads</span>
+              </div>
+              <div class="text-3xl font-bold text-gray-900 mb-2">{{ stats.totalLeads }}</div>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taxa de Conversão -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center space-x-2 mb-1">
+                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                <span class="text-sm text-gray-600">Taxa de Conversão</span>
+              </div>
+              <div class="text-3xl font-bold text-gray-900 mb-2">{{ stats.conversionRate }}%</div>
+            </div>
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Receita Gerada -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center space-x-2 mb-1">
+                <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+                <span class="text-sm text-gray-600">Receita Gerada</span>
+              </div>
+              <div class="text-3xl font-bold text-gray-900 mb-2">{{ formatCurrencyShort(stats.revenue) }}</div>
+            </div>
+            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conversão Meta -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center space-x-2 mb-1">
+                <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+                <span class="text-sm text-gray-600">Conversão Meta</span>
+              </div>
+              <div class="text-3xl font-bold text-gray-900 mb-2">{{ stats.convertedLeads }}</div>
+            </div>
+            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Gráficos e tabelas -->
@@ -153,6 +209,13 @@ const selectedPeriod = ref('30')
 const stats = computed(() => getDashboardStats())
 const allLeads = computed(() => getLeads())
 
+const filterPeriods = [
+  { label: 'Última Sem', value: '7' },
+  { label: 'Últimas 2W', value: '14' },
+  { label: 'Último mês', value: '30' },
+  { label: 'Este mês', value: 'current' }
+]
+
 const recentLeads = computed(() => {
   return [...allLeads.value]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -235,6 +298,18 @@ function getActivityColor(type: string): string {
 }
 
 function formatCurrency(value: number) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value)
+}
+
+function formatCurrencyShort(value: number) {
+  if (value >= 1000000) {
+    return `R$ ${(value / 1000000).toFixed(1)}M`
+  } else if (value >= 1000) {
+    return `R$ ${(value / 1000).toFixed(0)}k`
+  }
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL'
