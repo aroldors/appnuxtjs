@@ -1,12 +1,12 @@
 <template>
-  <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="lead-modal">
-    <div class="relative top-12 mx-auto p-4 border w-full max-w-[650px] shadow-lg rounded-md bg-white min-h-[500px] max-h-[85vh] overflow-y-auto">
-      <div class="mt-3">
-        <h3 class="text-lg font-medium text-gray-900 mb-3">
+  <div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50" id="lead-modal">
+    <div class="w-full max-w-[650px] bg-white rounded-lg shadow-xl border border-gray-200">
+      <div class="p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">
           {{ lead ? 'Editar Lead' : 'Novo Lead' }}
         </h3>
         
-        <form @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <form @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="col-span-1 md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Nome *
@@ -93,7 +93,7 @@
           
           <!-- Linha com 3 colunas para Valor da Oportunidade, Status e Fonte -->
           <div class="col-span-1 md:col-span-2">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div class="min-w-0">
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   Valor da Oportunidade *
@@ -114,7 +114,7 @@
                 </label>
                 <select
                   v-model="form.status"
-                  class="w-full min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none bg-white"
+                  class="select-field w-full min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none bg-white"
                 >
                   <option value="novo">Novo</option>
                   <option value="em-contato">Em Contato</option>
@@ -130,7 +130,7 @@
                 </label>
                 <select
                   v-model="form.source"
-                  class="w-full min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none bg-white"
+                  class="select-field w-full min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none bg-white"
                 >
                   <option value="LinkedIn">LinkedIn</option>
                   <option value="Website">Website</option>
@@ -150,13 +150,13 @@
             </label>
             <textarea
               v-model="form.notes"
-              rows="3"
+              rows="2"
               placeholder="Informações adicionais sobre o lead..."
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
             ></textarea>
           </div>
           
-          <div class="col-span-1 md:col-span-2 flex flex-col sm:flex-row justify-end gap-2 pt-4 mt-2 border-t border-gray-100">
+          <div class="col-span-1 md:col-span-2 flex flex-col sm:flex-row justify-end gap-3 pt-5 border-t border-gray-100">
             <button
               type="button"
               @click="$emit('cancel')"
@@ -254,3 +254,17 @@ function handleSubmit() {
   emit('save', submitData)
 }
 </script>
+
+<style scoped>
+.select-field {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.select-field:focus {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+</style>
