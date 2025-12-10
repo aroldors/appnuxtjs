@@ -98,17 +98,13 @@
                 Valor da Oportunidade *
               </label>
               <input
-                v-model.number="form.opportunityValue"
-                type="number"
-                step="0.01"
-                min="0"
+                :value="opportunityValueDisplay"
+                type="text"
                 required
-                placeholder="150.00"
+                placeholder="R$ 0,00"
                 class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                @input="handleCurrencyInput"
               >
-              <div v-if="form.opportunityValue > 0" class="text-xs text-gray-500 mt-1">
-                {{ formatCurrency(form.opportunityValue) }}
-              </div>
             </div>
             
             <div>
@@ -213,25 +209,39 @@ const form = reactive({
   lastContact: props.lead?.lastContact
 })
 
-// Função simples para formatar apenas na exibição
-function formatCurrency(value: number): string {
-  if (!value || value === 0) return ''
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2
-  }).format(value)
+// Usar composable de moeda personalizado
+const {
+  value: opportunityValueNumber,
+  displayValue: opportunityValueDisplay,
+  updateValue: updateOpportunityValue,
+  setValue: setOpportunityValue
+} = useCurrencyInput(form.opportunityValue)
+
+// Sincronizar valor do formulário com o composable
+watch(() => form.opportunityValue, (newValue) => {
+  if (newValue !== opportunityValueNumber.value) {
+    setOpportunityValue(newValue)
+  }
+})
+
+// Sincronizar composable com o formulário
+watch(opportunityValueNumber, (newValue) => {
+  form.opportunityValue = newValue
+})
+
+// Função para lidar com input de moeda
+function handleCurrencyInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  updateOpportunityValue(target.value)
 }
 
-// Função para converter string para número (remove formatação)
-function parseCurrencyInput(value: string): number {
-  if (!value) return 0
-  // Remove tudo exceto dígitos e vírgula/ponto
-  const cleaned = value.replace(/[^\d,.-]/g, '')
-  // Substitui vírgula por ponto
-  const normalized = cleaned.replace(',', '.')
-  return parseFloat(normalized) || 0
-}
+// Inicializar valor quando modal abre com lead existente
+watch(() => props.lead?.opportunityValue, (newValue) => {
+  if (newValue && newValue > 0) {
+    form.opportunityValue = newValue
+    setOpportunityValue(newValue)
+  }
+}, { immediate: true })
 
 function handleSubmit() {
   // Use opportunityValue as the main value, fallback to potentialValue for compatibility
