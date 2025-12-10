@@ -98,7 +98,7 @@
                 Valor da Oportunidade *
               </label>
               <input
-                v-model="formattedOpportunityValue"
+                v-model="opportunityValueDisplay"
                 type="text"
                 required
                 placeholder="R$ 0,00"
@@ -209,21 +209,17 @@ const form = reactive({
   lastContact: props.lead?.lastContact
 })
 
-// Computed property para formatar valor monetário
-const formattedOpportunityValue = computed({
-  get() {
-    if (!form.opportunityValue || form.opportunityValue === 0) return ''
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2
-    }).format(form.opportunityValue)
-  },
-  set(value: string) {
-    // Remove formatação e converte para número
-    const numericValue = value.replace(/[^\d,]/g, '').replace(',', '.')
-    form.opportunityValue = parseFloat(numericValue) || 0
-  }
+// Campo reativo para valor da oportunidade formatado
+const opportunityValueDisplay = ref('')
+
+// Computed property apenas para exibir valor formatado quando necessário
+const formattedOpportunityValue = computed(() => {
+  if (!form.opportunityValue || form.opportunityValue === 0) return ''
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2
+  }).format(form.opportunityValue)
 })
 
 // Função para lidar com input de moeda
@@ -231,27 +227,43 @@ function handleCurrencyInput(event: Event) {
   const target = event.target as HTMLInputElement
   let value = target.value
   
-  // Remove tudo exceto dígitos
-  value = value.replace(/[^\d]/g, '')
+  // Remove tudo exceto dígitos e vírgula
+  value = value.replace(/[^\d,]/g, '')
   
   if (value === '') {
     form.opportunityValue = 0
+    opportunityValueDisplay.value = ''
     return
   }
   
-  // Converte para centavos e depois para reais
-  const numericValue = parseInt(value) / 100
+  // Substitui vírgula por ponto para conversão
+  const numericValue = parseFloat(value.replace(',', '.')) || 0
   form.opportunityValue = numericValue
   
-  // Atualiza o valor formatado no campo
+  // Atualiza o campo com formatação
   nextTick(() => {
-    target.value = new Intl.NumberFormat('pt-BR', {
+    const formatted = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
       minimumFractionDigits: 2
     }).format(numericValue)
+    opportunityValueDisplay.value = formatted
+    target.value = formatted
   })
 }
+
+// Inicializa o valor de exibição quando o modal abre
+watch(() => props.lead?.opportunityValue, (newValue) => {
+  if (newValue && newValue > 0) {
+    opportunityValueDisplay.value = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    }).format(newValue)
+  } else {
+    opportunityValueDisplay.value = ''
+  }
+}, { immediate: true })
 
 function handleSubmit() {
   // Use opportunityValue as the main value, fallback to potentialValue for compatibility
