@@ -1,13 +1,13 @@
 <template>
   <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="contact-modal">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="relative top-20 mx-auto p-5 border w-[600px] shadow-lg rounded-md bg-white">
       <div class="mt-3">
         <h3 class="text-lg font-medium text-gray-900 mb-4">
           {{ contact ? 'Editar Contato' : 'Novo Contato' }}
         </h3>
         
-        <form @submit.prevent="handleSubmit" class="space-y-4">
-          <div>
+        <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Nome *
             </label>
@@ -98,7 +98,7 @@
             </select>
           </div>
           
-          <div>
+          <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Tags (separadas por vírgula)
             </label>
@@ -110,7 +110,7 @@
             >
           </div>
           
-          <div class="flex justify-end space-x-3 pt-4">
+          <div class="col-span-2 flex justify-end space-x-3 pt-4">
             <button
               type="button"
               @click="$emit('cancel')"
