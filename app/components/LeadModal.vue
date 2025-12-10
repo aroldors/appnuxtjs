@@ -1,13 +1,13 @@
 <template>
   <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="lead-modal">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="relative top-20 mx-auto p-5 border w-[650px] shadow-lg rounded-md bg-white">
       <div class="mt-3">
         <h3 class="text-lg font-medium text-gray-900 mb-4">
           {{ lead ? 'Editar Lead' : 'Novo Lead' }}
         </h3>
         
-        <form @submit.prevent="handleSubmit" class="space-y-4">
-          <div>
+        <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Nome *
             </label>
@@ -27,6 +27,18 @@
               v-model="form.company"
               type="text"
               required
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              LinkedIn
+            </label>
+            <input
+              v-model="form.linkedin"
+              type="url"
+              placeholder="https://linkedin.com/in/..."
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
           </div>
@@ -57,10 +69,10 @@
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
-              Empresa *
+              Cargo *
             </label>
             <input
-              v-model="form.company"
+              v-model="form.position"
               type="text"
               required
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -69,12 +81,27 @@
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
-              Cargo *
+              Ramo de Atividade
             </label>
             <input
-              v-model="form.position"
+              v-model="form.businessSector"
               type="text"
+              placeholder="Ex: Tecnologia, Saúde, Educação"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Valor da Oportunidade *
+            </label>
+            <input
+              v-model.number="form.opportunityValue"
+              type="number"
               required
+              min="0"
+              step="0.01"
+              placeholder="0.00"
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
           </div>
@@ -97,20 +124,6 @@
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
-              Valor Potencial *
-            </label>
-            <input
-              v-model.number="form.potentialValue"
-              type="number"
-              required
-              min="0"
-              step="0.01"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
               Fonte
             </label>
             <select
@@ -125,18 +138,21 @@
             </select>
           </div>
           
-          <div>
+          <div></div>
+          
+          <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Observações
             </label>
             <textarea
               v-model="form.notes"
               rows="3"
+              placeholder="Informações adicionais sobre o lead..."
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
             ></textarea>
           </div>
           
-          <div class="flex justify-end space-x-3 pt-4">
+          <div class="col-span-2 flex justify-end space-x-3 pt-4">
             <button
               type="button"
               @click="$emit('cancel')"
@@ -177,11 +193,14 @@ const { currentUser } = useAuth()
 const form = reactive({
   name: props.lead?.name || '',
   company: props.lead?.company || '',
+  linkedin: props.lead?.linkedin || '',
   email: props.lead?.email || '',
   phone: props.lead?.phone || '',
   position: props.lead?.position || '',
-  status: props.lead?.status || 'novo' as Lead['status'],
+  businessSector: props.lead?.businessSector || '',
   potentialValue: props.lead?.potentialValue || 0,
+  opportunityValue: props.lead?.opportunityValue || 0,
+  status: props.lead?.status || 'novo' as Lead['status'],
   source: props.lead?.source || 'LinkedIn',
   notes: props.lead?.notes || '',
   assignedUserId: props.lead?.assignedUserId || currentUser.value?.id || '1',
@@ -189,6 +208,11 @@ const form = reactive({
 })
 
 function handleSubmit() {
-  emit('save', { ...form })
+  // Use opportunityValue as the main value, fallback to potentialValue for compatibility
+  const submitData = {
+    ...form,
+    potentialValue: form.opportunityValue || form.potentialValue
+  }
+  emit('save', submitData)
 }
 </script>

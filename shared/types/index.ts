@@ -24,11 +24,14 @@ export interface Lead {
   id: string
   name: string
   company: string
+  linkedin?: string
   email: string
   phone: string
   position: string
+  businessSector?: string
   status: 'novo' | 'em-contato' | 'proposta-enviada' | 'fechado-ganho' | 'fechado-perdido'
   potentialValue: number
+  opportunityValue?: number
   source: string
   notes?: string
   companyId: string
