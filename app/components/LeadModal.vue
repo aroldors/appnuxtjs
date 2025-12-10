@@ -91,51 +91,53 @@
             >
           </div>
           
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Valor da Oportunidade *
-            </label>
-            <input
-              v-model.number="form.opportunityValue"
-              type="number"
-              required
-              min="0"
-              step="0.01"
-              placeholder="0.00"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              v-model="form.status"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="novo">Novo</option>
-              <option value="em-contato">Em Contato</option>
-              <option value="proposta-enviada">Proposta Enviada</option>
-              <option value="fechado-ganho">Fechado Ganho</option>
-              <option value="fechado-perdido">Fechado Perdido</option>
-            </select>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Fonte
-            </label>
-            <select
-              v-model="form.source"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="LinkedIn">LinkedIn</option>
-              <option value="Website">Website</option>
-              <option value="Indicação">Indicação</option>
-              <option value="Cold Email">Cold Email</option>
-              <option value="Evento">Evento</option>
-            </select>
+          <!-- Linha com 3 colunas para Valor da Oportunidade, Status e Fonte -->
+          <div class="col-span-2 grid grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Valor da Oportunidade *
+              </label>
+              <input
+                v-model="formattedOpportunityValue"
+                type="text"
+                required
+                placeholder="R$ 0,00"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                @input="handleCurrencyInput"
+              >
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                v-model="form.status"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="novo">Novo</option>
+                <option value="em-contato">Em Contato</option>
+                <option value="proposta-enviada">Proposta Enviada</option>
+                <option value="fechado-ganho">Fechado Ganho</option>
+                <option value="fechado-perdido">Fechado Perdido</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Fonte
+              </label>
+              <select
+                v-model="form.source"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Website">Website</option>
+                <option value="Indicação">Indicação</option>
+                <option value="Cold Email">Cold Email</option>
+                <option value="Evento">Evento</option>
+              </select>
+            </div>
           </div>
           
           <div></div>
@@ -206,6 +208,50 @@ const form = reactive({
   assignedUserId: props.lead?.assignedUserId || currentUser.value?.id || '1',
   lastContact: props.lead?.lastContact
 })
+
+// Computed property para formatar valor monetário
+const formattedOpportunityValue = computed({
+  get() {
+    if (!form.opportunityValue || form.opportunityValue === 0) return ''
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    }).format(form.opportunityValue)
+  },
+  set(value: string) {
+    // Remove formatação e converte para número
+    const numericValue = value.replace(/[^\d,]/g, '').replace(',', '.')
+    form.opportunityValue = parseFloat(numericValue) || 0
+  }
+})
+
+// Função para lidar com input de moeda
+function handleCurrencyInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  let value = target.value
+  
+  // Remove tudo exceto dígitos
+  value = value.replace(/[^\d]/g, '')
+  
+  if (value === '') {
+    form.opportunityValue = 0
+    return
+  }
+  
+  // Converte para centavos e depois para reais
+  const numericValue = parseInt(value) / 100
+  form.opportunityValue = numericValue
+  
+  // Atualiza o valor formatado no campo
+  nextTick(() => {
+    target.value = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    }).format(numericValue)
+  })
+}
 
 function handleSubmit() {
   // Use opportunityValue as the main value, fallback to potentialValue for compatibility
