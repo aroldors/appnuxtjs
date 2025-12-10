@@ -1,13 +1,13 @@
 <template>
   <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="lead-modal">
-    <div class="relative top-20 mx-auto p-5 border w-[650px] shadow-lg rounded-md bg-white">
+    <div class="relative top-12 mx-auto p-4 border w-full max-w-[650px] shadow-lg rounded-md bg-white min-h-[500px] max-h-[85vh] overflow-y-auto">
       <div class="mt-3">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <h3 class="text-lg font-medium text-gray-900 mb-3">
           {{ lead ? 'Editar Lead' : 'Novo Lead' }}
         </h3>
         
-        <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-4">
-          <div class="col-span-2">
+        <form @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="col-span-1 md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Nome *
             </label>
@@ -92,57 +92,59 @@
           </div>
           
           <!-- Linha com 3 colunas para Valor da Oportunidade, Status e Fonte -->
-          <div class="col-span-2 grid grid-cols-3 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Valor da Oportunidade *
-              </label>
-              <input
-                :value="opportunityValueDisplay"
-                type="text"
-                required
-                placeholder="R$ 0,00"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                @input="handleCurrencyInput"
-              >
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
-              <select
-                v-model="form.status"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="novo">Novo</option>
-                <option value="em-contato">Em Contato</option>
-                <option value="proposta-enviada">Proposta Enviada</option>
-                <option value="fechado-ganho">Fechado Ganho</option>
-                <option value="fechado-perdido">Fechado Perdido</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Fonte
-              </label>
-              <select
-                v-model="form.source"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="LinkedIn">LinkedIn</option>
-                <option value="Website">Website</option>
-                <option value="Indicação">Indicação</option>
-                <option value="Cold Email">Cold Email</option>
-                <option value="Evento">Evento</option>
-              </select>
+          <div class="col-span-1 md:col-span-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div class="min-w-0">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Valor da Oportunidade *
+                </label>
+                <input
+                  :value="opportunityValueDisplay"
+                  type="text"
+                  required
+                  placeholder="R$ 0,00"
+                  class="w-full min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  @input="handleCurrencyInput"
+                >
+              </div>
+              
+              <div class="min-w-0">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  v-model="form.status"
+                  class="w-full min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none bg-white"
+                >
+                  <option value="novo">Novo</option>
+                  <option value="em-contato">Em Contato</option>
+                  <option value="proposta-enviada">Proposta Enviada</option>
+                  <option value="fechado-ganho">Fechado Ganho</option>
+                  <option value="fechado-perdido">Fechado Perdido</option>
+                </select>
+              </div>
+              
+              <div class="min-w-0">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Fonte
+                </label>
+                <select
+                  v-model="form.source"
+                  class="w-full min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none bg-white"
+                >
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="Website">Website</option>
+                  <option value="Indicação">Indicação</option>
+                  <option value="Cold Email">Cold Email</option>
+                  <option value="Evento">Evento</option>
+                </select>
+              </div>
             </div>
           </div>
           
           <div></div>
           
-          <div class="col-span-2">
+          <div class="col-span-1 md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Observações
             </label>
@@ -154,17 +156,17 @@
             ></textarea>
           </div>
           
-          <div class="col-span-2 flex justify-end space-x-3 pt-4">
+          <div class="col-span-1 md:col-span-2 flex flex-col sm:flex-row justify-end gap-2 pt-4 mt-2 border-t border-gray-100">
             <button
               type="button"
               @click="$emit('cancel')"
-              class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-400"
+              class="order-2 sm:order-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-400 transition-colors duration-200"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+              class="order-1 sm:order-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
             >
               {{ lead ? 'Atualizar' : 'Criar' }} Lead
             </button>
