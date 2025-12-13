@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout>
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
       <h1 class="text-3xl font-bold text-gray-900 mb-8">Componentes Base - Teste</h1>
       
       <!-- BaseButton Tests -->
@@ -317,7 +316,6 @@
         </BaseButton>
       </section>
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -445,6 +443,7 @@ function showToast(type: 'success' | 'error' | 'warning' | 'info', message: stri
 
 // Page meta
 definePageMeta({
+  layout: 'default',
   title: 'Teste de Componentes',
   description: 'Página para testar componentes BaseButton e BaseInput'
 })

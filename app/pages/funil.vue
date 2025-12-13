@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="default-layout">
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Barra de filtros -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex items-center justify-between">
@@ -151,14 +150,13 @@
         @cancel="closeModal"
       />
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import type { Lead } from '~~/shared/types'
 
 definePageMeta({
-  layout: false
+  layout: 'default'
 })
 
 const { getLeads, getLeadsByStatus, updateLeadStatus, createLead, updateLead, filterLeads } = useLeads()

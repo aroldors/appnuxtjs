@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="default-layout">
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Header com filtros e ações -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
@@ -216,14 +215,13 @@
         @cancel="showImportModal = false"
       />
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import type { Contact } from '~~/shared/types'
 
 definePageMeta({
-  layout: false
+  layout: 'default'
 })
 
 const {

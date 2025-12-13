@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="default-layout">
-    <div class="space-y-4">
+  <div class="space-y-4">
       <!-- Titulo do dashboard -->
       <div class="bg-transparent px-0 pb-2">
         <div class="mb-4">
@@ -199,14 +198,13 @@
         </div>
       </div>
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import type { Lead } from '~~/shared/types'
 
 definePageMeta({
-  layout: false
+  layout: 'default'
 })
 
 const { getDashboardStats, getLeads } = useLeads()

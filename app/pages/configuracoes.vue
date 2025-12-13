@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="default-layout">
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Tabs -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200">
         <div class="border-b border-gray-200">
@@ -243,14 +242,13 @@
         @cancel="showNewUserModal = false"
       />
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import type { User, Company } from '~~/shared/types'
 
 definePageMeta({
-  layout: false
+  layout: 'default'
 })
 
 const { currentUser, currentCompany, updateProfile, updateCompany } = useAuth()
