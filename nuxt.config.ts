@@ -4,6 +4,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase'],
   supabase: {
-    redirect: false // Desabilita redirecionamento automático para login
+    redirect: false, // Desabilita redirecionamento automático para login
+    redirectOptions: {
+        login: '/login',
+        callback: '/dashboard',
+        exclude: ['/'] // páginas públicas
+      }
   }
 })

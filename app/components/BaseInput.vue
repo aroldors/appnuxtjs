@@ -10,20 +10,36 @@
     </label>
     
     <div class="relative">
+      <!-- Left icon slot -->
+      <div v-if="$slots.leftIcon" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <slot name="leftIcon" />
+      </div>
+      
       <input
         :id="inputId"
         v-model="inputValue"
-        :type="type"
+        :type="actualType"
         :placeholder="placeholder"
         :required="required"
         :disabled="disabled"
         :readonly="readonly"
-        :class="inputClasses"
+        :class="[inputClasses, $slots.leftIcon ? 'pl-10' : '', (type === 'password' || $slots.icon) ? 'pr-10' : '']"
         v-bind="$attrs"
       />
       
-      <!-- Icon slot -->
-      <div v-if="$slots.icon" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+      <!-- Password toggle button -->
+      <button
+        v-if="type === 'password'"
+        type="button"
+        @click="togglePasswordVisibility"
+        class="absolute inset-y-0 right-0 pr-3 flex items-center"
+      >
+        <EyeIcon v-if="showPassword" class="h-5 w-5 text-gray-400 hover:text-gray-600" />
+        <EyeSlashIcon v-else class="h-5 w-5 text-gray-400 hover:text-gray-600" />
+      </button>
+      
+      <!-- Right icon slot (only when not password) -->
+      <div v-else-if="$slots.icon" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
         <slot name="icon" />
       </div>
     </div>
@@ -41,6 +57,8 @@
 </template>
 
 <script setup lang="ts">
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+
 interface Props {
   modelValue?: string | number
   label?: string
@@ -70,14 +88,30 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+// Password visibility state
+const showPassword = ref(false)
+
 // Generate unique ID for accessibility
 const inputId = computed(() => `input-${Math.random().toString(36).substr(2, 9)}`)
+
+// Actual input type (changes for password toggle)
+const actualType = computed(() => {
+  if (props.type === 'password') {
+    return showPassword.value ? 'text' : 'password'
+  }
+  return props.type
+})
 
 // Two-way data binding
 const inputValue = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value || '')
 })
+
+// Toggle password visibility
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value
+}
 
 const inputClasses = computed(() => {
   const baseClasses = 'block w-full border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1'
@@ -102,15 +136,18 @@ const inputClasses = computed(() => {
     stateClasses.push('bg-gray-50')
   }
   
-  // Add padding for icon
-  const iconClass = 'pr-10'
+  // Add padding for icons
+  const paddingClasses = []
+  if (props.type === 'password') {
+    paddingClasses.push('pr-10')
+  }
   
   return [
     baseClasses,
     sizeClasses[props.size],
     variantClasses[props.variant],
     ...stateClasses,
-    iconClass
+    ...paddingClasses
   ].join(' ')
 })
 </script>
