@@ -92,7 +92,7 @@ const emit = defineEmits<Emits>()
 const showPassword = ref(false)
 
 // Generate unique ID for accessibility
-const inputId = computed(() => `input-${Math.random().toString(36).substr(2, 9)}`)
+const inputId = useId()
 
 // Actual input type (changes for password toggle)
 const actualType = computed(() => {

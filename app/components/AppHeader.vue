@@ -10,8 +10,8 @@
             <span class="text-sm font-medium text-gray-700">{{ userInitials }}</span>
           </div>
           <div class="text-sm">
-            <div class="font-medium text-gray-900">{{ currentUser?.name }}</div>
-            <div class="text-gray-500">{{ currentUser?.role }}</div>
+            <div class="font-medium text-gray-900">{{ profile?.nome || 'Usuário' }}</div>
+            <div class="text-gray-500">{{ profile?.role || 'user' }}</div>
           </div>
         </div>
         
@@ -30,10 +30,10 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '~~/shared/types'
-
 const route = useRoute()
-const { currentUser, logout } = useAuth()
+const { logout } = useAuth()
+const userStore = useUserStore()
+const { profile } = storeToRefs(userStore)
 
 const pageTitle = computed(() => {
   const titles: Record<string, string> = {
@@ -48,9 +48,10 @@ const pageTitle = computed(() => {
 })
 
 const userInitials = computed(() => {
-  if (!currentUser.value?.name) return 'U'
-  return currentUser.value.name
+  if (!profile.value?.nome) return 'U'
+  return profile.value.nome
     .split(' ')
+    .filter(name => name.length > 0)
     .map((name: string) => name[0])
     .join('')
     .toUpperCase()

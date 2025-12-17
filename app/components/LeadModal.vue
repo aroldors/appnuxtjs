@@ -192,7 +192,8 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const { currentUser } = useAuth()
+const userStore = useUserStore()
+const { profile: currentUser } = storeToRefs(userStore)
 
 const form = reactive({
   name: props.lead?.name || '',
@@ -207,7 +208,7 @@ const form = reactive({
   status: props.lead?.status || 'novo' as Lead['status'],
   source: props.lead?.source || 'LinkedIn',
   notes: props.lead?.notes || '',
-  assignedUserId: props.lead?.assignedUserId || currentUser.value?.id || '1',
+  assignedUserId: props.lead?.assignedUserId || (currentUser.value?.id?.toString()) || '1',
   lastContact: props.lead?.lastContact
 })
 

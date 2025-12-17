@@ -182,7 +182,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MessageTemplate } from '~/shared/types'
+import type { MessageTemplate } from '~~/shared/types'
 
 definePageMeta({
   layout: 'default'
@@ -255,16 +255,16 @@ function closeModal() {
   editingTemplate.value = null
 }
 
-function getTypeLabel(type: MessageTemplate['type']) {
-  const labels = {
+function getTypeLabel(type: MessageTemplate['type']): string {
+  const labels: Record<MessageTemplate['type'], string> = {
     'whatsapp': 'WhatsApp',
     'email': 'E-mail'
   }
   return labels[type] || type
 }
 
-function getTypeBadgeColor(type: MessageTemplate['type']) {
-  const colors = {
+function getTypeBadgeColor(type: MessageTemplate['type']): string {
+  const colors: Record<MessageTemplate['type'], string> = {
     'whatsapp': 'bg-green-100 text-green-800',
     'email': 'bg-purple-100 text-purple-800'
   }

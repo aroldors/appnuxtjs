@@ -87,12 +87,10 @@ export const useContacts = () => {
   }
 
   const createContact = (contactData: Omit<Contact, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>) => {
-    const { currentCompany } = useAuth()
-    
     const newContact: Contact = {
       ...contactData,
       id: `contact-${Date.now()}`,
-      companyId: currentCompany.value?.id || 'company-1',
+      companyId: 'company-1', // TODO: usar company do user store quando implementado
       createdAt: new Date(),
       updatedAt: new Date()
     }

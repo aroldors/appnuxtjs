@@ -2,6 +2,12 @@
   <div class="container mx-auto px-4 py-8 max-w-4xl">
       <h1 class="text-3xl font-bold text-gray-900 mb-8">Componentes Base - Teste</h1>
       
+      <!-- User Store Test -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Teste do Store Pinia - User</h2>
+        <TestUserStore />
+      </section>
+      
       <!-- BaseButton Tests -->
       <section class="mb-12">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6">BaseButton</h2>

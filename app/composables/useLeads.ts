@@ -110,12 +110,10 @@ export const useLeads = () => {
   }
 
   const createLead = (leadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>) => {
-    const { currentCompany } = useAuth()
-    
     const newLead: Lead = {
       ...leadData,
       id: `lead-${Date.now()}`,
-      companyId: currentCompany.value?.id || 'company-1',
+      companyId: 'company-1', // TODO: usar company do user store quando implementado
       createdAt: new Date(),
       updatedAt: new Date()
     }

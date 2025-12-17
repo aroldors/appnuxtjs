@@ -35,18 +35,17 @@
           <span v-else>Entrar</span>
         </button>
       </div>
-    </form>
 
-    <!-- Demo credentials -->
-    <div class="mt-6">
-      <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
-        <h3 class="text-sm font-medium text-blue-900 mb-2">Credenciais para Demo:</h3>
-        <div class="text-xs text-blue-700 space-y-1">
-          <div>Admin: joao@empresa.com / admin123</div>
-          <div>Vendedor: maria@empresa.com / vendedor123</div>
-        </div>
+      <!-- Link Esqueceu a Senha -->
+      <div class="text-center">
+        <a 
+          href="#" 
+          class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+        >
+          Esqueceu sua senha?
+        </a>
       </div>
-    </div>
+    </form>
 
     <div v-if="error" class="mt-4">
       <div class="bg-red-50 border border-red-200 rounded-md p-3">
@@ -62,8 +61,8 @@ import { UserIcon, LockClosedIcon } from '@heroicons/vue/24/outline'
 const { login, loading: authLoading } = useAuth()
 
 const form = reactive({
-  email: 'joao@empresa.com',
-  password: 'admin123'
+  email: '',
+  password: ''
 })
 
 const error = ref('')

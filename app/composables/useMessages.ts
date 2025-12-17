@@ -97,12 +97,10 @@ export const useMessages = () => {
   }
 
   const createTemplate = (templateData: Omit<MessageTemplate, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>) => {
-    const { currentCompany } = useAuth()
-    
     const newTemplate: MessageTemplate = {
       ...templateData,
       id: `template-${Date.now()}`,
-      companyId: currentCompany.value?.id || 'company-1',
+      companyId: 'company-1', // TODO: usar company do user store quando implementado
       createdAt: new Date(),
       updatedAt: new Date()
     }

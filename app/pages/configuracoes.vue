@@ -219,7 +219,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
-                        v-if="user.id !== currentUser?.id"
+                        v-if="user.id !== currentUser?.user_id"
                         @click="removeUser(user.id)"
                         class="text-red-600 hover:text-red-900"
                       >
@@ -251,7 +251,22 @@ definePageMeta({
   layout: 'default'
 })
 
-const { currentUser, currentCompany, updateProfile, updateCompany } = useAuth()
+const userStore = useUserStore()
+const { profile: currentUser } = storeToRefs(userStore)
+
+// Mock company data - pode ser movido para um store posteriormente
+const currentCompany = ref({
+  id: 'default',
+  name: 'Empresa Demo LTDA',
+  cnpj: '12.345.678/0001-90',
+  timezone: 'America/Sao_Paulo',
+  currency: 'BRL'
+})
+
+const updateCompany = (data: any) => {
+  console.log('Atualizar empresa:', data)
+  Object.assign(currentCompany.value, data)
+}
 
 const activeTab = ref('profile')
 const showNewUserModal = ref(false)
@@ -264,8 +279,8 @@ const tabs = [
 
 // Forms
 const userForm = reactive({
-  name: currentUser.value?.name || '',
-  email: currentUser.value?.email || '',
+  name: currentUser.value?.nome || '',
+  email: currentUser.value?.user_id || '',
   role: currentUser.value?.role || 'vendedor',
   password: ''
 })
@@ -301,7 +316,7 @@ const companyUsers = ref([
 
 function saveUserProfile() {
   const { password, ...profileData } = userForm
-  updateProfile(profileData)
+  userStore.updateProfile(profileData)
   alert('Perfil atualizado com sucesso!')
 }
 
@@ -311,8 +326,8 @@ function saveCompanyData() {
 }
 
 function resetUserForm() {
-  userForm.name = currentUser.value?.name || ''
-  userForm.email = currentUser.value?.email || ''
+  userForm.name = currentUser.value?.nome || ''
+  userForm.email = currentUser.value?.user_id || ''
   userForm.role = currentUser.value?.role || 'vendedor'
   userForm.password = ''
 }
