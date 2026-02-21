@@ -1,93 +1,51 @@
 import type { Lead, DashboardStats } from '~~/shared/types'
+import type { Database } from '../types/database'
 
-// Mock data
-const mockLeads: Lead[] = [
-  {
-    id: '1',
-    name: 'Carlos Eduardo',
-    company: 'TechCorp LTDA',
-    email: 'carlos@techcorp.com',
-    phone: '(11) 99999-1234',
-    position: 'Diretor de TI',
-    status: 'novo',
-    potentialValue: 15000,
-    source: 'LinkedIn',
-    companyId: 'company-1',
-    assignedUserId: '1',
-    createdAt: new Date('2024-12-01'),
-    updatedAt: new Date('2024-12-01')
-  },
-  {
-    id: '2',
-    name: 'Ana Paula',
-    company: 'Startup XYZ',
-    email: 'ana@startupxyz.com',
-    phone: '(11) 88888-5678',
-    position: 'CEO',
-    status: 'em-contato',
-    potentialValue: 25000,
-    source: 'Indicação',
-    companyId: 'company-1',
-    assignedUserId: '2',
-    lastContact: new Date('2024-12-03'),
-    createdAt: new Date('2024-11-28'),
-    updatedAt: new Date('2024-12-03')
-  },
-  {
-    id: '3',
-    name: 'Roberto Lima',
-    company: 'Indústria ABC',
-    email: 'roberto@industriaabc.com',
-    phone: '(11) 77777-9876',
-    position: 'Gerente Comercial',
-    status: 'proposta-enviada',
-    potentialValue: 45000,
-    source: 'Website',
-    notes: 'Interessado em solução completa',
-    companyId: 'company-1',
-    assignedUserId: '1',
-    lastContact: new Date('2024-12-02'),
-    createdAt: new Date('2024-11-25'),
-    updatedAt: new Date('2024-12-02')
-  },
-  {
-    id: '4',
-    name: 'Mariana Costa',
-    company: 'Consultoria MN',
-    email: 'mariana@consultoriamn.com',
-    phone: '(11) 66666-4321',
-    position: 'Sócia',
-    status: 'fechado-ganho',
-    potentialValue: 30000,
-    source: 'LinkedIn',
-    companyId: 'company-1',
-    assignedUserId: '2',
-    lastContact: new Date('2024-11-30'),
-    createdAt: new Date('2024-11-20'),
-    updatedAt: new Date('2024-11-30')
-  },
-  {
-    id: '5',
-    name: 'Pedro Santos',
-    company: 'Comércio PQ',
-    email: 'pedro@comerciopq.com',
-    phone: '(11) 55555-1111',
-    position: 'Proprietário',
-    status: 'fechado-perdido',
-    potentialValue: 8000,
-    source: 'Cold Email',
-    notes: 'Não teve orçamento aprovado',
-    companyId: 'company-1',
-    assignedUserId: '1',
-    lastContact: new Date('2024-11-29'),
-    createdAt: new Date('2024-11-15'),
-    updatedAt: new Date('2024-11-29')
+type LeadRow = Database['public']['Tables']['leads']['Row']
+
+function mapRowToLead(row: LeadRow): Lead {
+  return {
+    id: String(row.id),
+    name: row.nome ?? '',
+    company: '',  // campo não existe na tabela leads
+    email: row.email ?? '',
+    phone: row.telefone ?? '',
+    position: row.cargo ?? '',
+    linkedin: row.linkedin ?? undefined,
+    businessSector: row.ramo_atividade ?? undefined,
+    status: (row.status as Lead['status']) ?? 'novo',
+    potentialValue: row.vlr_oportunidade ?? 0,
+    source: row.origem ?? '',
+    notes: row.observacoes ?? undefined,
+    companyId: '',  // campo não existe na tabela leads
+    assignedUserId: row.user_id ?? '',
+    createdAt: new Date(row.created_at),
+    updatedAt: row.updated_at ? new Date(row.updated_at) : new Date(row.created_at)
   }
-]
+}
 
 export const useLeads = () => {
-  const leads = useState<Lead[]>('leads.data', () => mockLeads)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
+  const leads = useState<Lead[]>('leads.data', () => [])
   const loading = ref(false)
+
+  const fetchLeads = async () => {
+    loading.value = true
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      leads.value = (data ?? []).map(mapRowToLead)
+    } catch (err) {
+      console.error('Erro ao buscar leads:', err)
+    } finally {
+      loading.value = false
+    }
+  }
 
   const getLeads = () => {
     return leads.value
@@ -97,44 +55,102 @@ export const useLeads = () => {
     return leads.value.filter(lead => lead.status === status)
   }
 
-  const updateLeadStatus = (leadId: string, newStatus: Lead['status']) => {
+  const updateLeadStatus = async (leadId: string, newStatus: Lead['status']) => {
+    const { error } = await supabase
+      .from('leads')
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .eq('id', Number(leadId))
+
+    if (error) {
+      console.error('Erro ao atualizar status do lead:', error)
+      return
+    }
+
     const leadIndex = leads.value.findIndex(lead => lead.id === leadId)
     if (leadIndex !== -1) {
-      const existingLead = leads.value[leadIndex]
       leads.value[leadIndex] = {
-        ...existingLead,
+        ...leads.value[leadIndex],
         status: newStatus,
         updatedAt: new Date()
       } as Lead
     }
   }
 
-  const createLead = (leadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>) => {
-    const newLead: Lead = {
-      ...leadData,
-      id: `lead-${Date.now()}`,
-      companyId: 'company-1', // TODO: usar company do user store quando implementado
-      createdAt: new Date(),
-      updatedAt: new Date()
+  const createLead = async (leadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt' | 'companyId' | 'assignedUserId'>) => {
+    const { data, error } = await supabase
+      .from('leads')
+      .insert({
+        nome: leadData.name,
+        email: leadData.email,
+        telefone: leadData.phone,
+        cargo: leadData.position,
+        linkedin: leadData.linkedin ?? null,
+        ramo_atividade: leadData.businessSector ?? null,
+        status: leadData.status,
+        vlr_oportunidade: leadData.potentialValue,
+        origem: leadData.source,
+        observacoes: leadData.notes ?? null
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Erro ao criar lead:', error)
+      return null
     }
-    
+
+    const newLead = mapRowToLead(data as LeadRow)
     leads.value.push(newLead)
     return newLead
   }
 
-  const updateLead = (leadId: string, leadData: Partial<Lead>) => {
+  const updateLead = async (leadId: string, leadData: Partial<Lead>) => {
+    const updatePayload: Record<string, unknown> = {
+      updated_at: new Date().toISOString()
+    }
+
+    if (leadData.name !== undefined) updatePayload.nome = leadData.name
+    if (leadData.email !== undefined) updatePayload.email = leadData.email
+    if (leadData.phone !== undefined) updatePayload.telefone = leadData.phone
+    if (leadData.position !== undefined) updatePayload.cargo = leadData.position
+    if (leadData.linkedin !== undefined) updatePayload.linkedin = leadData.linkedin
+    if (leadData.businessSector !== undefined) updatePayload.ramo_atividade = leadData.businessSector
+    if (leadData.status !== undefined) updatePayload.status = leadData.status
+    if (leadData.potentialValue !== undefined) updatePayload.vlr_oportunidade = leadData.potentialValue
+    if (leadData.source !== undefined) updatePayload.origem = leadData.source
+    if (leadData.notes !== undefined) updatePayload.observacoes = leadData.notes
+
+    const { error } = await supabase
+      .from('leads')
+      .update(updatePayload)
+      .eq('id', Number(leadId))
+
+    if (error) {
+      console.error('Erro ao atualizar lead:', error)
+      return
+    }
+
     const leadIndex = leads.value.findIndex(lead => lead.id === leadId)
     if (leadIndex !== -1) {
-      const existingLead = leads.value[leadIndex]
       leads.value[leadIndex] = {
-        ...existingLead,
+        ...leads.value[leadIndex],
         ...leadData,
         updatedAt: new Date()
       } as Lead
     }
   }
 
-  const deleteLead = (leadId: string) => {
+  const deleteLead = async (leadId: string) => {
+    const { error } = await supabase
+      .from('leads')
+      .delete()
+      .eq('id', Number(leadId))
+
+    if (error) {
+      console.error('Erro ao deletar lead:', error)
+      return
+    }
+
     const leadIndex = leads.value.findIndex(lead => lead.id === leadId)
     if (leadIndex !== -1) {
       leads.value.splice(leadIndex, 1)
@@ -191,7 +207,6 @@ export const useLeads = () => {
       const searchLower = filters.search.toLowerCase()
       filteredLeads = filteredLeads.filter(lead =>
         lead.name.toLowerCase().includes(searchLower) ||
-        lead.company.toLowerCase().includes(searchLower) ||
         lead.email.toLowerCase().includes(searchLower)
       )
     }
@@ -202,6 +217,7 @@ export const useLeads = () => {
   return {
     leads: readonly(leads),
     loading: readonly(loading),
+    fetchLeads,
     getLeads,
     getLeadsByStatus,
     updateLeadStatus,

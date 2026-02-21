@@ -159,7 +159,9 @@ definePageMeta({
   layout: 'default'
 })
 
-const { getLeads, getLeadsByStatus, updateLeadStatus, createLead, updateLead, filterLeads } = useLeads()
+const { getLeads, getLeadsByStatus, updateLeadStatus, createLead, updateLead, filterLeads, fetchLeads } = useLeads()
+
+onMounted(() => fetchLeads())
 
 const searchQuery = ref('')
 const filterSource = ref('')

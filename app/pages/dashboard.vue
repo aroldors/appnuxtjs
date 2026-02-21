@@ -207,7 +207,9 @@ definePageMeta({
   layout: 'default'
 })
 
-const { getDashboardStats, getLeads } = useLeads()
+const { getDashboardStats, getLeads, fetchLeads } = useLeads()
+
+onMounted(() => fetchLeads())
 
 const selectedPeriod = ref('30')
 const stats = computed(() => getDashboardStats())
