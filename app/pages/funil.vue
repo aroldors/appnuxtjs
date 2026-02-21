@@ -176,8 +176,9 @@ const filteredLeads = computed(() => {
   })
 })
 
-function handleSaveLead(leadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>) {
-  createLead(leadData)
+async function handleSaveLead(leadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>) {
+  const result = await createLead(leadData)
+  console.log('[funil] handleSaveLead result:', result)
   closeModal()
 }
 

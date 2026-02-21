@@ -36,12 +36,14 @@ export const useLeads = () => {
       const { data, error } = await supabase
         .from('leads')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
 
+      console.log('[useLeads] fetchLeads → data:', data, '| error:', error)
       if (error) throw error
       leads.value = (data ?? []).map(mapRowToLead)
+      console.log('[useLeads] leads carregados:', leads.value.length)
     } catch (err) {
-      console.error('Erro ao buscar leads:', err)
+      console.error('[useLeads] Erro ao buscar leads:', err)
     } finally {
       loading.value = false
     }
@@ -95,10 +97,11 @@ export const useLeads = () => {
       .single()
 
     if (error) {
-      console.error('Erro ao criar lead:', error)
+      console.error('[useLeads] Erro ao criar lead:', error)
       return null
     }
 
+    console.log('[useLeads] Lead criado:', data)
     const newLead = mapRowToLead(data as LeadRow)
     leads.value.push(newLead)
     return newLead

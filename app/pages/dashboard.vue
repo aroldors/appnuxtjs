@@ -207,13 +207,13 @@ definePageMeta({
   layout: 'default'
 })
 
-const { getDashboardStats, getLeads, fetchLeads } = useLeads()
+const { leads, getDashboardStats, fetchLeads } = useLeads()
 
 onMounted(() => fetchLeads())
 
 const selectedPeriod = ref('30')
 const stats = computed(() => getDashboardStats())
-const allLeads = computed(() => getLeads())
+const allLeads = computed(() => leads.value)
 
 const filterPeriods = [
   { label: 'Última Semana', value: '7' },
