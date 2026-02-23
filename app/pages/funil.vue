@@ -45,12 +45,18 @@
                 {{ getLeadsByStatus('novo').length }}
               </span>
             </div>
-            <div class="space-y-3 min-h-[500px]">
+            <div
+              class="space-y-3 min-h-[500px] rounded-lg p-1 transition-colors"
+              :class="dragOverStatus === 'novo' ? 'bg-blue-50 ring-2 ring-inset ring-blue-300' : ''"
+              @dragenter.prevent="dragOverStatus = 'novo'"
+              @dragover.prevent
+              @dragleave="handleDragLeave($event, 'novo')"
+              @drop.prevent="handleDrop($event, 'novo')"
+            >
               <LeadCard
                 v-for="lead in getFilteredLeadsByStatus('novo')"
                 :key="lead.id"
                 :lead="lead"
-                @update="updateLeadStatus"
                 @edit="editLead"
               />
             </div>
@@ -64,12 +70,18 @@
                 {{ getFilteredLeadsByStatus('em-contato').length }}
               </span>
             </div>
-            <div class="space-y-3 min-h-[500px]">
+            <div
+              class="space-y-3 min-h-[500px] rounded-lg p-1 transition-colors"
+              :class="dragOverStatus === 'em-contato' ? 'bg-yellow-50 ring-2 ring-inset ring-yellow-300' : ''"
+              @dragenter.prevent="dragOverStatus = 'em-contato'"
+              @dragover.prevent
+              @dragleave="handleDragLeave($event, 'em-contato')"
+              @drop.prevent="handleDrop($event, 'em-contato')"
+            >
               <LeadCard
                 v-for="lead in getFilteredLeadsByStatus('em-contato')"
                 :key="lead.id"
                 :lead="lead"
-                @update="updateLeadStatus"
                 @edit="editLead"
               />
             </div>
@@ -83,12 +95,18 @@
                 {{ getFilteredLeadsByStatus('proposta-enviada').length }}
               </span>
             </div>
-            <div class="space-y-3 min-h-[500px]">
+            <div
+              class="space-y-3 min-h-[500px] rounded-lg p-1 transition-colors"
+              :class="dragOverStatus === 'proposta-enviada' ? 'bg-purple-50 ring-2 ring-inset ring-purple-300' : ''"
+              @dragenter.prevent="dragOverStatus = 'proposta-enviada'"
+              @dragover.prevent
+              @dragleave="handleDragLeave($event, 'proposta-enviada')"
+              @drop.prevent="handleDrop($event, 'proposta-enviada')"
+            >
               <LeadCard
                 v-for="lead in getFilteredLeadsByStatus('proposta-enviada')"
                 :key="lead.id"
                 :lead="lead"
-                @update="updateLeadStatus"
                 @edit="editLead"
               />
             </div>
@@ -102,12 +120,18 @@
                 {{ getFilteredLeadsByStatus('fechado-ganho').length }}
               </span>
             </div>
-            <div class="space-y-3 min-h-[500px]">
+            <div
+              class="space-y-3 min-h-[500px] rounded-lg p-1 transition-colors"
+              :class="dragOverStatus === 'fechado-ganho' ? 'bg-green-50 ring-2 ring-inset ring-green-300' : ''"
+              @dragenter.prevent="dragOverStatus = 'fechado-ganho'"
+              @dragover.prevent
+              @dragleave="handleDragLeave($event, 'fechado-ganho')"
+              @drop.prevent="handleDrop($event, 'fechado-ganho')"
+            >
               <LeadCard
                 v-for="lead in getFilteredLeadsByStatus('fechado-ganho')"
                 :key="lead.id"
                 :lead="lead"
-                @update="updateLeadStatus"
                 @edit="editLead"
               />
             </div>
@@ -121,12 +145,18 @@
                 {{ getFilteredLeadsByStatus('fechado-perdido').length }}
               </span>
             </div>
-            <div class="space-y-3 min-h-[500px]">
+            <div
+              class="space-y-3 min-h-[500px] rounded-lg p-1 transition-colors"
+              :class="dragOverStatus === 'fechado-perdido' ? 'bg-red-50 ring-2 ring-inset ring-red-300' : ''"
+              @dragenter.prevent="dragOverStatus = 'fechado-perdido'"
+              @dragover.prevent
+              @dragleave="handleDragLeave($event, 'fechado-perdido')"
+              @drop.prevent="handleDrop($event, 'fechado-perdido')"
+            >
               <LeadCard
                 v-for="lead in getFilteredLeadsByStatus('fechado-perdido')"
                 :key="lead.id"
                 :lead="lead"
-                @update="updateLeadStatus"
                 @edit="editLead"
               />
             </div>
@@ -203,5 +233,34 @@ function closeModal() {
 // Override getLeadsByStatus to use filtered results
 function getFilteredLeadsByStatus(status: Lead['status']) {
   return filteredLeads.value.filter(lead => lead.status === status)
+}
+
+// --- Drag & Drop ---
+const dragOverStatus = ref<Lead['status'] | null>(null)
+
+function handleDrop(event: DragEvent, targetStatus: Lead['status']) {
+  dragOverStatus.value = null
+  if (!event.dataTransfer) return
+  try {
+    const data = JSON.parse(event.dataTransfer.getData('application/json')) as {
+      leadId: string
+      currentStatus: Lead['status']
+    }
+    if (data.leadId && data.currentStatus !== targetStatus) {
+      updateLeadStatus(data.leadId, targetStatus)
+    }
+  } catch (e) {
+    console.error('[funil] Erro ao processar drop:', e)
+  }
+}
+
+function handleDragLeave(event: DragEvent, status: Lead['status']) {
+  const relatedTarget = event.relatedTarget as Element | null
+  const currentTarget = event.currentTarget as Element
+  if (!relatedTarget || !currentTarget.contains(relatedTarget)) {
+    if (dragOverStatus.value === status) {
+      dragOverStatus.value = null
+    }
+  }
 }
 </script>

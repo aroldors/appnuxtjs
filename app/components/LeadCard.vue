@@ -1,10 +1,10 @@
 <template>
   <div 
-    class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-move"
+    class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all cursor-move select-none"
+    :class="isDragging ? 'opacity-50 scale-95 rotate-1' : ''"
     draggable="true"
     @dragstart="handleDragStart"
     @dragend="handleDragEnd"
-    id="lead-card"
   >
     <div class="flex items-start justify-between mb-3">
       <div class="flex-1">
@@ -65,19 +65,6 @@
       {{ lead.notes }}
     </div>
 
-    <!-- Status Actions (for drag and drop alternative) -->
-    <div class="mt-3 flex flex-wrap gap-1">
-      <button
-        v-for="status in availableStatuses"
-        :key="status"
-        v-show="status !== lead.status"
-        @click="$emit('update', lead.id, status)"
-        class="text-xs px-2 py-1 rounded transition-colors"
-        :class="getStatusButtonColor(status)"
-      >
-        {{ getStatusLabel(status) }}
-      </button>
-    </div>
   </div>
 </template>
 
@@ -89,23 +76,18 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'update', leadId: string, newStatus: Lead['status']): void
   (e: 'edit', lead: Lead): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const availableStatuses: Lead['status'][] = [
-  'novo',
-  'em-contato',
-  'proposta-enviada',
-  'fechado-ganho',
-  'fechado-perdido'
-]
+const isDragging = ref(false)
 
 function handleDragStart(event: DragEvent) {
+  isDragging.value = true
   if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
     event.dataTransfer.setData('application/json', JSON.stringify({
       leadId: props.lead.id,
       currentStatus: props.lead.status
@@ -114,29 +96,7 @@ function handleDragStart(event: DragEvent) {
 }
 
 function handleDragEnd() {
-  // Reset any drag styling if needed
-}
-
-function getStatusLabel(status: Lead['status']): string {
-  const labels: Record<Lead['status'], string> = {
-    'novo': 'Novo',
-    'em-contato': 'Em Contato',
-    'proposta-enviada': 'Proposta',
-    'fechado-ganho': 'Ganho',
-    'fechado-perdido': 'Perdido'
-  }
-  return labels[status] || status
-}
-
-function getStatusButtonColor(status: Lead['status']): string {
-  const colors: Record<Lead['status'], string> = {
-    'novo': 'bg-blue-100 text-blue-700 hover:bg-blue-200',
-    'em-contato': 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200',
-    'proposta-enviada': 'bg-purple-100 text-purple-700 hover:bg-purple-200',
-    'fechado-ganho': 'bg-green-100 text-green-700 hover:bg-green-200',
-    'fechado-perdido': 'bg-red-100 text-red-700 hover:bg-red-200'
-  }
-  return colors[status] || 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+  isDragging.value = false
 }
 
 function formatCurrency(value: number) {
