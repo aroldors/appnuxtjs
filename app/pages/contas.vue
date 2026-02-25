@@ -12,8 +12,13 @@
       :rows="contas"
       :loading="loading"
       empty-message="Nenhuma conta encontrada."
+      :paginator="true"
+      :current-page="currentPage"
+      :total-items="totalItems"
+      :page-size="pageSize"
       @edit="onEdit"
       @delete="onDelete"
+      @page-change="onPageChange"
     />
   </div>
 </template>
@@ -24,7 +29,7 @@ import BaseDataGrid from '../components/BaseDataGrid.vue'
 import type { GridColumn } from '../components/BaseDataGrid.vue'
 import { useContas } from '../composables/useContas'
 
-const { contas, loading, fetchContas } = useContas()
+const { contas, loading, currentPage, totalItems, pageSize, fetchContas } = useContas()
 
 const columns: GridColumn[] = [
   { key: 'nome_fantasia', label: 'Nome' },
@@ -38,6 +43,10 @@ function onEdit(row: unknown) {
 
 function onDelete(row: unknown) {
   console.log('[contas] deletar:', row)
+}
+
+function onPageChange(page: number) {
+  fetchContas(page)
 }
 
 onMounted(() => {

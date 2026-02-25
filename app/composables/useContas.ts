@@ -6,24 +6,34 @@ type ContaRow = Database['public']['Tables']['contas']['Row']
 type ContaInsert = Database['public']['Tables']['contas']['Insert']
 type ContaUpdate = Database['public']['Tables']['contas']['Update']
 
+const PAGE_SIZE = 10
+
 export const useContas = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any
   const contas = useState<ContaRow[]>('contas.data', () => [])
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const currentPage = ref(1)
+  const totalItems = ref(0)
+  const pageSize = PAGE_SIZE
 
-  const fetchContas = async () => {
+  const fetchContas = async (page = 1) => {
     loading.value = true
     error.value = null
+    currentPage.value = page
+    const from = (page - 1) * PAGE_SIZE
+    const to = from + PAGE_SIZE - 1
     try {
-      const { data, error: sbError } = await supabase
+      const { data, count, error: sbError } = await supabase
         .from('contas')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('id', { ascending: false })
+        .range(from, to)
 
       if (sbError) throw sbError
       contas.value = data ?? []
+      totalItems.value = count ?? 0
     } catch (err) {
       console.error('[useContas] Erro ao buscar contas:', err)
       error.value = 'Erro ao buscar contas.'
@@ -103,6 +113,9 @@ export const useContas = () => {
     contas,
     loading,
     error,
+    currentPage,
+    totalItems,
+    pageSize,
     fetchContas,
     insertConta,
     updateConta,

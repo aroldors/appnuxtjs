@@ -90,10 +90,97 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Paginator -->
+    <div
+      v-if="paginator && totalItems > 0"
+      class="flex items-center justify-between px-6 py-3 border-t border-gray-200 bg-gray-50"
+    >
+      <!-- Info -->
+      <span class="text-sm text-gray-500">
+        Exibindo
+        <span class="font-medium text-gray-700">{{ rangeStart }}</span>
+        –
+        <span class="font-medium text-gray-700">{{ rangeEnd }}</span>
+        de
+        <span class="font-medium text-gray-700">{{ totalItems }}</span>
+        registros
+      </span>
+
+      <!-- Controles -->
+      <div class="flex items-center space-x-1">
+        <!-- Primeira página -->
+        <button
+          :disabled="currentPage === 1"
+          @click="onPageChange(1)"
+          class="p-2 rounded-lg text-gray-500 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Primeira página"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7M18 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <!-- Página anterior -->
+        <button
+          :disabled="currentPage === 1"
+          @click="onPageChange(currentPage - 1)"
+          class="p-2 rounded-lg text-gray-500 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Página anterior"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <!-- Números de página -->
+        <template v-for="page in visiblePages" :key="page">
+          <span v-if="page === '...'" class="px-2 text-gray-400 text-sm select-none">…</span>
+          <button
+            v-else
+            @click="onPageChange(page as number)"
+            :class="[
+              'w-9 h-9 rounded-lg text-sm font-medium transition-colors',
+              page === currentPage
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-gray-600 hover:bg-gray-200'
+            ]"
+          >
+            {{ page }}
+          </button>
+        </template>
+
+        <!-- Próxima página -->
+        <button
+          :disabled="currentPage === totalPages"
+          @click="onPageChange(currentPage + 1)"
+          class="p-2 rounded-lg text-gray-500 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Próxima página"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <!-- Última página -->
+        <button
+          :disabled="currentPage === totalPages"
+          @click="onPageChange(totalPages)"
+          class="p-2 rounded-lg text-gray-500 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Última página"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M6 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts" generic="T extends Record<string, unknown>">
+import { computed } from 'vue'
+
 export interface GridColumn {
   key: string
   label: string
@@ -105,19 +192,65 @@ interface Props {
   loading?: boolean
   showActions?: boolean
   emptyMessage?: string
+  /** Habilita o paginador */
+  paginator?: boolean
+  /** Página atual (1-based) */
+  currentPage?: number
+  /** Total de itens no servidor/banco */
+  totalItems?: number
+  /** Quantidade de itens por página */
+  pageSize?: number
 }
 
 interface Emits {
   (e: 'view', row: T): void
   (e: 'edit', row: T): void
   (e: 'delete', row: T): void
+  (e: 'page-change', page: number): void
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   loading: false,
   showActions: true,
-  emptyMessage: 'Nenhum registro encontrado.'
+  emptyMessage: 'Nenhum registro encontrado.',
+  paginator: false,
+  currentPage: 1,
+  totalItems: 0,
+  pageSize: 10
 })
 
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
+
+const totalPages = computed(() => Math.ceil(props.totalItems / props.pageSize))
+
+const rangeStart = computed(() => (props.currentPage - 1) * props.pageSize + 1)
+const rangeEnd = computed(() => Math.min(props.currentPage * props.pageSize, props.totalItems))
+
+/** Gera array de páginas visíveis com reticências quando necessário */
+const visiblePages = computed<(number | '...')[]>(() => {
+  const total = totalPages.value
+  const current = props.currentPage
+  const delta = 1
+
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+
+  const pages: (number | '...')[] = []
+  const left = Math.max(2, current - delta)
+  const right = Math.min(total - 1, current + delta)
+
+  pages.push(1)
+  if (left > 2) pages.push('...')
+  for (let i = left; i <= right; i++) pages.push(i)
+  if (right < total - 1) pages.push('...')
+  pages.push(total)
+
+  return pages
+})
+
+function onPageChange(page: number): void {
+  if (page < 1 || page > totalPages.value || page === props.currentPage) return
+  emit('page-change', page)
+}
 </script>
