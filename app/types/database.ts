@@ -72,6 +72,80 @@ export interface Database {
           updated_at?: string | null
         }
       }
+      contas: {
+        Row: {
+          id: number
+          razao_social: string | null
+          cpf_cnpj: string
+          nome_fantasia: string | null
+          ramo_atividade: string | null
+          endereco: string | null
+          numero: number | null
+          bairro: string | null
+          cidade: string | null
+          estado: string | null
+          rg: string | null
+          cep: string | null
+          fone_comercial: string | null
+          fone_celular: string | null
+          email: string | null
+          website: string | null
+          contato: string | null
+          gestor_conta: number | null
+          created_at: string
+          updated_at: string | null
+          user_id: string
+          cliente_id: string | null
+        }
+        Insert: {
+          id?: number
+          razao_social?: string | null
+          cpf_cnpj: string
+          nome_fantasia?: string | null
+          ramo_atividade?: string | null
+          endereco?: string | null
+          numero?: number | null
+          bairro?: string | null
+          cidade?: string | null
+          estado?: string | null
+          rg?: string | null
+          cep?: string | null
+          fone_comercial?: string | null
+          fone_celular?: string | null
+          email?: string | null
+          website?: string | null
+          contato?: string | null
+          gestor_conta?: number | null
+          created_at?: string
+          updated_at?: string | null
+          user_id?: string
+          cliente_id?: string | null
+        }
+        Update: {
+          id?: number
+          razao_social?: string | null
+          cpf_cnpj?: string
+          nome_fantasia?: string | null
+          ramo_atividade?: string | null
+          endereco?: string | null
+          numero?: number | null
+          bairro?: string | null
+          cidade?: string | null
+          estado?: string | null
+          rg?: string | null
+          cep?: string | null
+          fone_comercial?: string | null
+          fone_celular?: string | null
+          email?: string | null
+          website?: string | null
+          contato?: string | null
+          gestor_conta?: number | null
+          created_at?: string
+          updated_at?: string | null
+          user_id?: string
+          cliente_id?: string | null
+        }
+      }
       users: {
         Row: {
           id: number

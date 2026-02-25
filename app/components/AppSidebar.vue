@@ -34,10 +34,19 @@
         <NuxtLink
           to="/contatos"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/contatos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          :class="isActivePath('/contatos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
         >
           <UsersIcon class="mr-3 h-5 w-5" />
           Contatos
+        </NuxtLink>
+
+        <NuxtLink
+          to="/contas"
+          class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
+          :class="isActivePath('/contas') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+        >
+          <BuildingOfficeIcon class="mr-3 h-5 w-5" />
+          Contas
         </NuxtLink>
 
         <NuxtLink
@@ -114,6 +123,7 @@ import {
   ChartBarIcon, 
   FunnelIcon, 
   UsersIcon, 
+  BuildingOfficeIcon,
   ChatBubbleLeftEllipsisIcon, 
   Cog6ToothIcon,
   EnvelopeIcon 
