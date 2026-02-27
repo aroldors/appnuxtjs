@@ -42,98 +42,102 @@
         />
       </div>
 
-      <!-- Endereço -->
-      <div class="md:col-span-2">
-        <BaseInput
-          v-model="form.endereco"
-          label="Endereço"
-          placeholder="Rua, Avenida, etc."
-          :error-message="formErrors.endereco"
-        />
+      <!-- Endereço / Número / Bairro -->
+      <div class="md:col-span-2 grid grid-cols-6 gap-4">
+        <div class="col-span-6 md:col-span-3">
+          <BaseInput
+            v-model="form.endereco"
+            label="Endereço"
+            placeholder="Rua, Avenida, etc."
+            :error-message="formErrors.endereco"
+          />
+        </div>
+
+        <div class="col-span-6 md:col-span-1">
+          <BaseInput
+            v-model="form.numero"
+            label="Número"
+            type="number"
+            placeholder="Nº"
+            :error-message="formErrors.numero"
+          />
+        </div>
+
+        <div class="col-span-6 md:col-span-2">
+          <BaseInput
+            v-model="form.bairro"
+            label="Bairro"
+            placeholder="Bairro"
+            :error-message="formErrors.bairro"
+          />
+        </div>
       </div>
 
-      <!-- Bairro -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.bairro"
-          label="Bairro"
-          placeholder="Bairro"
-          :error-message="formErrors.bairro"
-        />
+      <!-- Cidade / Estado / CEP -->
+      <div class="md:col-span-2 grid grid-cols-6 gap-4">
+        <div class="col-span-6 md:col-span-3">
+          <BaseInput
+            v-model="form.cidade"
+            label="Cidade"
+            placeholder="Cidade"
+            :error-message="formErrors.cidade"
+          />
+        </div>
+
+        <div class="col-span-6 md:col-span-1">
+          <BaseInput
+            v-model="form.estado"
+            label="Estado"
+            placeholder="UF"
+            :error-message="formErrors.estado"
+          />
+        </div>
+
+        <div class="col-span-6 md:col-span-2">
+          <BaseInput
+            v-model="form.cep"
+            label="CEP"
+            placeholder="00000-000"
+            :error-message="formErrors.cep"
+          />
+        </div>
       </div>
 
-      <!-- Número -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.numero"
-          label="Número"
-          type="number"
-          placeholder="Nº"
-          :error-message="formErrors.numero"
-        />
-      </div>
+      <!-- Telefone Comercial / Telefone Celular / Email -->
+      <div class="md:col-span-2 grid grid-cols-2 gap-4">
+        <!-- Telefones juntos ocupando metade da linha (alinhado com Cidade) -->
+        <div class="col-span-2 md:col-span-1 grid grid-cols-2 gap-4">
+          <div class="col-span-2 md:col-span-1">
+            <BaseInput
+              v-model="form.fone_comercial"
+              label="Telefone Comercial"
+              type="tel"
+              placeholder="(00) 0000-0000"
+              :error-message="formErrors.fone_comercial"
+            />
+          </div>
 
-      <!-- Cidade -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.cidade"
-          label="Cidade"
-          placeholder="Cidade"
-          :error-message="formErrors.cidade"
-        />
-      </div>
+          <div class="col-span-2 md:col-span-1">
+            <BaseInput
+              v-model="form.fone_celular"
+              label="Telefone Celular"
+              type="tel"
+              placeholder="(00) 00000-0000"
+              :error-message="formErrors.fone_celular"
+            />
+          </div>
+        </div>
 
-      <!-- Estado -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.estado"
-          label="Estado"
-          placeholder="UF"
-          :error-message="formErrors.estado"
-        />
-      </div>
-
-      <!-- CEP -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.cep"
-          label="CEP"
-          placeholder="00000-000"
-          :error-message="formErrors.cep"
-        />
-      </div>
-
-      <!-- Telefone Comercial -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.fone_comercial"
-          label="Telefone Comercial"
-          type="tel"
-          placeholder="(00) 0000-0000"
-          :error-message="formErrors.fone_comercial"
-        />
-      </div>
-
-      <!-- Telefone Celular -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.fone_celular"
-          label="Telefone Celular"
-          type="tel"
-          placeholder="(00) 00000-0000"
-          :error-message="formErrors.fone_celular"
-        />
-      </div>
-
-      <!-- Email -->
-      <div class="md:col-span-1">
-        <BaseInput
-          v-model="form.email"
-          label="E-mail"
-          type="email"
-          placeholder="email@exemplo.com"
-          :error-message="formErrors.email"
-        />
+        <!-- Email ocupa a outra metade -->
+        <div class="col-span-2 md:col-span-1">
+          <BaseInput
+            v-model="form.email"
+            label="E-mail"
+            type="email"
+            placeholder="email@exemplo.com"
+            :error-message="formErrors.email"
+          />
+        </div>
       </div>
 
       <!-- Website -->
