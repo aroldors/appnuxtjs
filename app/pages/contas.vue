@@ -20,7 +20,7 @@
           </svg>
         </div>
         <button
-          @click="showNewContaModal = true"
+          @click="openNew"
           class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
         >
           + Nova Conta
@@ -46,6 +46,14 @@
         <div class="text-sm text-gray-500">{{ (row as any).email }}</div>
       </template>
     </BaseDataGrid>
+
+  <ContasModal
+    :open="showModal"
+    :is-edition="isEdition"
+    :conta-id="selectedContaId ?? undefined"
+    @close="handleModalClose"
+    @saved="handleSaved"
+  />
   </div>
 </template>
 
@@ -53,12 +61,15 @@
 import { ref, computed, onMounted } from '#imports'
 import BaseDataGrid from '../components/BaseDataGrid.vue'
 import type { GridColumn } from '../components/BaseDataGrid.vue'
+import ContasModal from '../components/ContasModal.vue'
 import { useContas } from '../composables/useContas'
 
 const { contas, loading, currentPage, totalItems, pageSize, fetchContas } = useContas()
 
 const searchQuery = ref('')
-const showNewContaModal = ref(false)
+const showModal = ref(false)
+const isEdition = ref(false)
+const selectedContaId = ref<number | null>(null)
 
 const filteredContas = computed(() => {
   if (!searchQuery.value.trim()) return contas.value
@@ -75,12 +86,32 @@ const columns: GridColumn[] = [
   { key: 'fone_celular',  label: 'Telefone' },
 ]
 
-function onEdit(row: unknown) {
-  console.log('[contas] editar:', row)
+function openNew () {
+  isEdition.value = false
+  selectedContaId.value = null
+  showModal.value = true
 }
 
-function onDelete(row: unknown) {
+function onEdit (row: unknown) {
+  const conta = row as { id: number }
+  isEdition.value = true
+  selectedContaId.value = conta.id
+  showModal.value = true
+}
+
+function onDelete (row: unknown) {
   console.log('[contas] deletar:', row)
+}
+
+function handleModalClose () {
+  showModal.value = false
+  isEdition.value = false
+  selectedContaId.value = null
+}
+
+function handleSaved () {
+  handleModalClose()
+  fetchContas(currentPage.value)
 }
 
 function onPageChange(page: number) {

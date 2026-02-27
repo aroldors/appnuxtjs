@@ -68,20 +68,39 @@ export const useContas = () => {
     loading.value = true
     error.value = null
     try {
+      // Desestrutura updated_at para ignorar qualquer valor vindo do payload
+      // e garante que o timestamp enviado ao Supabase seja sempre o atual em timestamptz
+      const { updated_at: _ignored, ...safeUpdates } = updates
+      const payload = {
+        ...safeUpdates,
+        updated_at: new Date().toISOString()
+      }
+
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        error.value = 'Usuário não autenticado.'
+        return null
+      }
+
       const { data, error: sbError } = await supabase
         .from('contas')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(payload)
         .eq('id', id)
         .select()
-        .single()
+        .maybeSingle()
 
       if (sbError) throw sbError
+
+      // Se RLS bloquear o SELECT pós-update, data será null mas o update ocorreu.
+      // Nesse caso usa o registro do estado local como fallback.
+      const updatedRow = (data as ContaRow) ?? contas.value.find(c => c.id === id) ?? null
       const index = contas.value.findIndex(c => c.id === id)
-      if (index !== -1) contas.value[index] = data as ContaRow
-      return data as ContaRow
-    } catch (err) {
+      if (index !== -1 && updatedRow) contas.value[index] = updatedRow
+      return updatedRow
+    } catch (err: unknown) {
       console.error('[useContas] Erro ao atualizar conta:', err)
-      error.value = 'Erro ao atualizar conta.'
+      const e = err as Record<string, unknown>
+      error.value = (e?.message as string) ?? (e?.error_description as string) ?? JSON.stringify(err)
       return null
     } finally {
       loading.value = false
