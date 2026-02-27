@@ -1,27 +1,35 @@
 <template>
   <div id="base-data-grid" class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-    <!-- Loading state -->
-    <div v-if="loading" class="flex items-center justify-center py-16">
-      <svg class="animate-spin h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-      </svg>
-      <span class="ml-2 text-sm text-gray-500">Carregando...</span>
-    </div>
+    <!-- Table wrapper com overlay de loading -->
+    <div class="relative overflow-x-auto">
+      <!-- Overlay semi-transparente durante paginação -->
+      <div
+        v-if="loading"
+        class="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-[1px]"
+      >
+        <svg class="animate-spin h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+        </svg>
+      </div>
 
-    <!-- Table -->
-    <div v-else class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
+      <!-- Loading inicial (sem dados ainda) -->
+      <div v-if="loading && rows.length === 0" class="flex items-center justify-center py-16">
+        <span class="ml-2 text-sm text-gray-500">Carregando...</span>
+      </div>
+
+      <!-- Table -->
+      <table v-else class="min-w-full divide-y divide-gray-200">
         <thead class="bg-blue-50">
           <tr>
             <th
               v-for="col in columns"
               :key="col.key"
-              class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+              class="px-6 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
             >
               {{ col.label }}
             </th>
-            <th v-if="showActions" class="py-3 pr-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">
+            <th v-if="showActions" class="py-2 pr-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">
               Ações
             </th>
           </tr>
@@ -43,7 +51,7 @@
             <td
               v-for="col in columns"
               :key="col.key"
-              class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+              class="px-6 py-2 whitespace-nowrap text-sm text-gray-700"
             >
               <!-- Custom slot por coluna -->
               <slot :name="col.key" :row="row" :value="row[col.key]">
@@ -52,7 +60,7 @@
             </td>
 
             <!-- Ações -->
-            <td v-if="showActions" class="py-4 pr-4 whitespace-nowrap text-sm w-32">
+            <td v-if="showActions" class="py-2 pr-4 whitespace-nowrap text-sm w-32">
               <div class="flex items-center justify-center space-x-1">
                 <slot name="actions" :row="row">
                   <button

@@ -58,13 +58,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from '#imports'
+import { ref, computed } from '#imports'
 import BaseDataGrid from '../components/BaseDataGrid.vue'
 import type { GridColumn } from '../components/BaseDataGrid.vue'
 import ContasModal from '../components/ContasModal.vue'
 import { useContas } from '../composables/useContas'
 
-const { contas, loading, currentPage, totalItems, pageSize, fetchContas } = useContas()
+const { contas, loading, currentPage, totalItems, pageSize, refreshContas } = useContas()
 
 const searchQuery = ref('')
 const showModal = ref(false)
@@ -111,14 +111,10 @@ function handleModalClose () {
 
 function handleSaved () {
   handleModalClose()
-  fetchContas(currentPage.value)
+  refreshContas()
 }
 
 function onPageChange(page: number) {
-  fetchContas(page)
+  currentPage.value = page
 }
-
-onMounted(() => {
-  fetchContas()
-})
 </script>
