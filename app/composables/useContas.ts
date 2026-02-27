@@ -14,21 +14,30 @@ export const useContas = () => {
   const error = ref<string | null>(null)
   const currentPage = ref(1)
   const pageSize = PAGE_SIZE
+  const searchQuery = ref('')
 
   const { data, pending: loading, refresh: refreshContas } = useAsyncData(
-    () => `contas-page-${currentPage.value}`,
+    () => `contas-page-${currentPage.value}-${searchQuery.value}`,
     async () => {
       const from = (currentPage.value - 1) * PAGE_SIZE
       const to = from + PAGE_SIZE - 1
-      const { data, count, error: sbError } = await supabase
+      let query = supabase
         .from('contas')
         .select('*', { count: 'exact' })
         .order('id', { ascending: false })
         .range(from, to)
+
+      if (searchQuery.value.trim()) {
+        query = query.or(
+          `nome_fantasia.ilike.%${searchQuery.value.trim()}%,razao_social.ilike.%${searchQuery.value.trim()}%`
+        )
+      }
+
+      const { data, count, error: sbError } = await query
       if (sbError) throw sbError
       return { rows: (data ?? []) as ContaRow[], total: (count ?? 0) as number }
     },
-    { watch: [currentPage] }
+    { watch: [currentPage, searchQuery] }
   )
 
   const contas = computed(() => data.value?.rows ?? [])
@@ -86,6 +95,23 @@ export const useContas = () => {
     }
   }
 
+  const fetchContaById = async (id: number): Promise<ContaRow | null> => {
+    error.value = null
+    try {
+      const { data, error: sbError } = await supabase
+        .from('contas')
+        .select('*')
+        .eq('id', id)
+        .single()
+      if (sbError) throw sbError
+      return data as ContaRow
+    } catch (err) {
+      console.error('[useContas] Erro ao buscar conta por id:', err)
+      error.value = 'Erro ao buscar conta.'
+      return null
+    }
+  }
+
   const deleteConta = async (id: number): Promise<boolean> => {
     error.value = null
     try {
@@ -110,9 +136,11 @@ export const useContas = () => {
     currentPage,
     totalItems,
     pageSize,
+    searchQuery,
     refreshContas,
     insertConta,
     updateConta,
-    deleteConta
+    deleteConta,
+    fetchContaById
   }
 }

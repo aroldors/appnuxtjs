@@ -192,7 +192,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 const toast = useToast()
-const { insertConta, updateConta, fetchContas, contas, loading, error: contaError } = useContas()
+const { insertConta, updateConta, fetchContaById, loading, error: contaError } = useContas()
 
 // Form state
 const form = reactive<{
@@ -341,14 +341,7 @@ watch(
     if (!isOpen) return
 
     if (props.isEdition && props.contaId != null) {
-      // Try to find the record in the current list first
-      let conta = contas.value.find(c => c.id === props.contaId)
-
-      if (!conta) {
-        await fetchContas()
-        conta = contas.value.find(c => c.id === props.contaId)
-      }
-
+      const conta = await fetchContaById(props.contaId)
       if (conta) {
         populateForm(conta)
       }
