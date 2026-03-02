@@ -146,6 +146,68 @@ export interface Database {
           cliente_id?: string | null
         }
       }
+      contatos: {
+        Row: {
+          id: number
+          nome: string | null
+          endereco: string | null
+          numero: number | null
+          bairro: string | null
+          cidade: string | null
+          estado: string | null
+          cep: string | null
+          telefone: string | null
+          email: string | null
+          cargo: string | null
+          origem: string | null
+          conta: number | null
+          status: string
+          tags: string[] | null
+          user_id: string
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: number
+          nome?: string | null
+          endereco?: string | null
+          numero?: number | null
+          bairro?: string | null
+          cidade?: string | null
+          estado?: string | null
+          cep?: string | null
+          telefone?: string | null
+          email?: string | null
+          cargo?: string | null
+          origem?: string | null
+          conta?: number | null
+          status?: string
+          tags?: string[] | null
+          user_id?: string
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: number
+          nome?: string | null
+          endereco?: string | null
+          numero?: number | null
+          bairro?: string | null
+          cidade?: string | null
+          estado?: string | null
+          cep?: string | null
+          telefone?: string | null
+          email?: string | null
+          cargo?: string | null
+          origem?: string | null
+          conta?: number | null
+          status?: string
+          tags?: string[] | null
+          user_id?: string
+          created_at?: string
+          updated_at?: string | null
+        }
+      }
       users: {
         Row: {
           id: number

@@ -1,169 +1,342 @@
-<template>
-  <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="contact-modal">
-    <div class="relative top-20 mx-auto p-5 border w-[600px] shadow-lg rounded-md bg-white">
-      <div class="mt-3">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">
-          {{ contact ? 'Editar Contato' : 'Novo Contato' }}
-        </h3>
-        
-        <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-4">
-          <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Nome *
-            </label>
-            <input
-              v-model="form.name"
-              type="text"
-              required
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              E-mail *
-            </label>
-            <input
-              v-model="form.email"
-              type="email"
-              required
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Telefone *
-            </label>
-            <input
-              v-model="form.phone"
-              type="tel"
-              required
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Empresa *
-            </label>
-            <input
-              v-model="form.company"
-              type="text"
-              required
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Cargo *
-            </label>
-            <input
-              v-model="form.position"
-              type="text"
-              required
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Fonte
-            </label>
-            <select
-              v-model="form.source"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="LinkedIn">LinkedIn</option>
-              <option value="Website">Website</option>
-              <option value="Indicação">Indicação</option>
-              <option value="Cold Email">Cold Email</option>
-              <option value="Evento">Evento</option>
-              <option value="Importação">Importação</option>
-            </select>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              v-model="form.status"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="ativo">Ativo</option>
-              <option value="inativo">Inativo</option>
-              <option value="bloqueado">Bloqueado</option>
-            </select>
-          </div>
-          
-          <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Tags (separadas por vírgula)
-            </label>
-            <input
-              v-model="tagsInput"
-              type="text"
-              placeholder="decisor, tecnologia, ceo"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-          </div>
-          
-          <div class="col-span-2 flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              @click="$emit('cancel')"
-              class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-400"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
-            >
-              {{ contact ? 'Atualizar' : 'Criar' }} Contato
-            </button>
-          </div>
-        </form>
+﻿<template>
+  <BaseModal
+    :open="open"
+    :title="isEdition ? 'Editar Contato' : 'Novo Contato'"
+    size="lg"
+    :confirm-text="isEdition ? 'Salvar Alterações' : 'Cadastrar'"
+    cancel-text="Cancelar"
+    :loading="loading"
+    loading-text="Salvando..."
+    @close="handleClose"
+    @confirm="handleSubmit"
+  >
+    <form id="contact-modal-form" class="grid grid-cols-1 md:grid-cols-2 gap-4" @submit.prevent="handleSubmit">
+      <!-- Nome -->
+      <div class="md:col-span-2">
+        <BaseInput
+          v-model="form.nome"
+          label="Nome"
+          placeholder="Nome do contato"
+          required
+          :error-message="formErrors.nome"
+        />
       </div>
-    </div>
-  </div>
+
+      <!-- Cargo / Telefone -->
+      <div>
+        <BaseInput
+          v-model="form.cargo"
+          label="Cargo"
+          placeholder="Cargo ou função"
+          :error-message="formErrors.cargo"
+        />
+      </div>
+
+      <div>
+        <BaseInput
+          v-model="form.telefone"
+          label="Telefone"
+          type="tel"
+          placeholder="(00) 00000-0000"
+          :error-message="formErrors.telefone"
+        />
+      </div>
+
+      <!-- E-mail -->
+      <div class="md:col-span-2">
+        <BaseInput
+          v-model="form.email"
+          label="E-mail"
+          type="email"
+          placeholder="email@exemplo.com"
+          :error-message="formErrors.email"
+        />
+      </div>
+
+      <!-- Endereço / Número / Bairro -->
+      <div class="md:col-span-2 grid grid-cols-6 gap-4">
+        <div class="col-span-6 md:col-span-3">
+          <BaseInput
+            v-model="form.endereco"
+            label="Endereço"
+            placeholder="Rua, Avenida, etc."
+          />
+        </div>
+        <div class="col-span-6 md:col-span-1">
+          <BaseInput
+            v-model="form.numero"
+            label="Número"
+            type="number"
+            placeholder="Nº"
+          />
+        </div>
+        <div class="col-span-6 md:col-span-2">
+          <BaseInput
+            v-model="form.bairro"
+            label="Bairro"
+            placeholder="Bairro"
+          />
+        </div>
+      </div>
+
+      <!-- Cidade / Estado / CEP -->
+      <div class="md:col-span-2 grid grid-cols-6 gap-4">
+        <div class="col-span-6 md:col-span-3">
+          <BaseInput
+            v-model="form.cidade"
+            label="Cidade"
+            placeholder="Cidade"
+          />
+        </div>
+        <div class="col-span-6 md:col-span-1">
+          <BaseInput
+            v-model="form.estado"
+            label="Estado"
+            placeholder="UF"
+          />
+        </div>
+        <div class="col-span-6 md:col-span-2">
+          <BaseInput
+            v-model="form.cep"
+            label="CEP"
+            placeholder="00000-000"
+          />
+        </div>
+      </div>
+
+      <!-- Origem -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Origem</label>
+        <select
+          v-model="form.origem"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="Website">Website</option>
+          <option value="Indicacao">Indicação</option>
+          <option value="Cold Email">Cold Email</option>
+          <option value="Evento">Evento</option>
+          <option value="Importacao">Importação</option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+        <select
+          v-model="form.status"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+          <option value="bloqueado">Bloqueado</option>
+        </select>
+      </div>
+
+      <!-- Tags -->
+      <div class="md:col-span-2">
+        <BaseInput
+          v-model="tagsInput"
+          label="Tags"
+          placeholder="decisor, tecnologia, ceo (separadas por vírgula)"
+        />
+      </div>
+
+      <!-- Conta -->
+      <div>
+        <BaseDropdown
+          v-model="form.conta"
+          label="Conta"
+          placeholder="Selecione uma conta..."
+          :options="contasOptions"
+        />
+      </div>
+    </form>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
-import type { Contact } from '~~/shared/types'
+import { reactive, ref, computed, watch } from '#imports'
+import { useToast } from 'vue-toastification'
+import BaseModal from './BaseModal.vue'
+import BaseInput from './BaseInput.vue'
+import BaseDropdown from './BaseDropdown.vue'
+import { useContacts } from '../composables/useContacts'
+import { useContas } from '../composables/useContas'
+import type { Database } from '../types/database'
+
+type ContatoInsert = Database['public']['Tables']['contatos']['Insert']
+type ContatoUpdate = Database['public']['Tables']['contatos']['Update']
 
 interface Props {
-  contact?: Contact | null
+  open: boolean
+  isEdition?: boolean
+  contactId?: number
 }
 
 interface Emits {
-  (e: 'save', data: Omit<Contact, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>): void
-  (e: 'cancel'): void
+  (e: 'close'): void
+  (e: 'saved'): void
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
-
-const form = reactive({
-  name: props.contact?.name || '',
-  email: props.contact?.email || '',
-  phone: props.contact?.phone || '',
-  company: props.contact?.company || '',
-  position: props.contact?.position || '',
-  source: props.contact?.source || 'LinkedIn',
-  status: props.contact?.status || 'ativo' as Contact['status']
+const props = withDefaults(defineProps<Props>(), {
+  isEdition: false
 })
 
-const tagsInput = ref(props.contact?.tags?.join(', ') || '')
+const emit = defineEmits<Emits>()
 
-function handleSubmit() {
-  const tags = tagsInput.value
-    .split(',')
-    .map((tag: string) => tag.trim())
-    .filter((tag: string) => tag.length > 0)
-  
-  emit('save', { ...form, tags })
+const toast = useToast()
+const { insertContact, updateContact, fetchContactById, loading, error: contactError } = useContacts()
+const { contas } = useContas()
+
+const contasOptions = computed(() =>
+  contas.value.map(c => ({
+    value: c.id,
+    label: c.nome_fantasia || c.razao_social || String(c.id)
+  }))
+)
+
+const form = reactive<{
+  nome: string
+  email: string
+  telefone: string
+  cargo: string
+  endereco: string
+  numero: string
+  bairro: string
+  cidade: string
+  estado: string
+  cep: string
+  origem: string
+  conta: string | number | null
+  status: string
+}>({
+  nome: '',
+  email: '',
+  telefone: '',
+  cargo: '',
+  endereco: '',
+  numero: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
+  cep: '',
+  origem: 'LinkedIn',
+  conta: null,
+  status: 'ativo'
+})
+
+const tagsInput = ref('')
+const formErrors = reactive<Partial<Record<keyof typeof form | 'tags', string>>>({})
+
+function resetForm() {
+  form.nome = ''
+  form.email = ''
+  form.telefone = ''
+  form.cargo = ''
+  form.endereco = ''
+  form.numero = ''
+  form.bairro = ''
+  form.cidade = ''
+  form.estado = ''
+  form.cep = ''
+  form.origem = 'LinkedIn'
+  form.conta = null
+  form.status = 'ativo'
+  tagsInput.value = ''
+  Object.keys(formErrors).forEach(key => delete (formErrors as Record<string, string>)[key])
 }
+
+function populateForm(contato: Database['public']['Tables']['contatos']['Row']) {
+  form.nome = contato.nome ?? ''
+  form.email = contato.email ?? ''
+  form.telefone = contato.telefone ?? ''
+  form.cargo = contato.cargo ?? ''
+  form.endereco = contato.endereco ?? ''
+  form.numero = contato.numero != null ? String(contato.numero) : ''
+  form.bairro = contato.bairro ?? ''
+  form.cidade = contato.cidade ?? ''
+  form.estado = contato.estado ?? ''
+  form.cep = contato.cep ?? ''
+  form.origem = contato.origem ?? 'LinkedIn'
+  form.conta = contato.conta ?? null
+  form.status = contato.status ?? 'ativo'
+  tagsInput.value = contato.tags?.join(', ') ?? ''
+}
+
+function validate(): boolean {
+  Object.keys(formErrors).forEach(key => delete (formErrors as Record<string, string>)[key])
+  if (!form.nome.trim()) {
+    formErrors.nome = 'Nome e obrigatorio.'
+    return false
+  }
+  return true
+}
+
+function parseTags(): string[] {
+  return tagsInput.value
+    .split(',')
+    .map(t => t.trim())
+    .filter(t => t.length > 0)
+}
+
+async function handleSubmit() {
+  if (!validate()) return
+
+  const tags = parseTags()
+
+  const basePayload = {
+    nome: form.nome.trim() || null,
+    email: form.email.trim() || null,
+    telefone: form.telefone.trim() || null,
+    cargo: form.cargo.trim() || null,
+    endereco: form.endereco.trim() || null,
+    numero: form.numero !== '' ? Number(form.numero) : null,
+    bairro: form.bairro.trim() || null,
+    cidade: form.cidade.trim() || null,
+    estado: form.estado.trim() || null,
+    cep: form.cep.trim() || null,
+    origem: form.origem || null,
+    conta: form.conta != null ? Number(form.conta) : null,
+    status: form.status,
+    tags: tags.length ? tags : null
+  }
+
+  if (props.isEdition && props.contactId != null) {
+    const result = await updateContact(props.contactId, basePayload as ContatoUpdate)
+    if (result) {
+      toast.success('Contato atualizado com sucesso!')
+      emit('saved')
+    } else {
+      toast.error(contactError.value ?? 'Erro ao atualizar o contato. Tente novamente.')
+    }
+  } else {
+    const result = await insertContact(basePayload as ContatoInsert)
+    if (result) {
+      toast.success('Contato cadastrado com sucesso!')
+      emit('saved')
+    } else {
+      toast.error(contactError.value ?? 'Erro ao cadastrar o contato. Tente novamente.')
+    }
+  }
+}
+
+function handleClose() {
+  resetForm()
+  emit('close')
+}
+
+watch(
+  () => props.open,
+  async (isOpen) => {
+    if (!isOpen) return
+
+    if (props.isEdition && props.contactId != null) {
+      const contato = await fetchContactById(props.contactId)
+      if (contato) populateForm(contato)
+    } else {
+      resetForm()
+    }
+  }
+)
 </script>

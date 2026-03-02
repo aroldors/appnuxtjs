@@ -1,308 +1,179 @@
-<template>
-  <div class="space-y-6">
-      <!-- Header com filtros e ações -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">Gerenciar Contatos</h2>
-          <div class="flex items-center space-x-3">
-            <button
-              @click="showImportModal = true"
-              class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700"
-            >
-              Importar
-            </button>
-            <button
-              @click="showNewContactModal = true"
-              class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
-            >
-              + Novo Contato
-            </button>
-          </div>
-        </div>
-        
-        <div class="flex items-center space-x-4">
-          <div class="relative">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Buscar contatos..."
-              class="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-            <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          
-          <select v-model="filterStatus" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-            <option value="">Todos os status</option>
-            <option value="ativo">Ativo</option>
-            <option value="inativo">Inativo</option>
-            <option value="bloqueado">Bloqueado</option>
-          </select>
-          
-          <select v-model="filterSource" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-            <option value="">Todas as fontes</option>
-            <option value="LinkedIn">LinkedIn</option>
-            <option value="Website">Website</option>
-            <option value="Indicação">Indicação</option>
-            <option value="Importação">Importação</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Estatísticas -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div class="flex items-center">
-            <div class="p-2 bg-blue-100 rounded-lg">
-              <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Total de Contatos</p>
-              <p class="text-2xl font-bold text-gray-900">{{ contactsStats.total }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div class="flex items-center">
-            <div class="p-2 bg-green-100 rounded-lg">
-              <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Ativos</p>
-              <p class="text-2xl font-bold text-gray-900">{{ contactsStats.active }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div class="flex items-center">
-            <div class="p-2 bg-yellow-100 rounded-lg">
-              <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Inativos</p>
-              <p class="text-2xl font-bold text-gray-900">{{ contactsStats.inactive }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div class="flex items-center">
-            <div class="p-2 bg-red-100 rounded-lg">
-              <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
-              </svg>
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">Bloqueados</p>
-              <p class="text-2xl font-bold text-gray-900">{{ contactsStats.blocked }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabela de contatos -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nome
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Empresa
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cargo
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contato
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fonte
-                </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="contact in filteredContacts" :key="contact.id">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
-                      <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                        <span class="text-sm font-medium text-gray-700">
-                          {{ contact.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().substring(0, 2) }}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">{{ contact.name }}</div>
-                      <div class="text-sm text-gray-500">{{ contact.email }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ contact.company }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ contact.position }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ contact.phone }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span 
-                    class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                    :class="getStatusBadgeColor(contact.status)"
-                  >
-                    {{ getStatusLabel(contact.status) }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ contact.source }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    @click="editContact(contact)"
-                    class="text-blue-600 hover:text-blue-900 hover:bg-blue-50 p-2 rounded-lg transition-colors mr-2"
-                    title="Editar contato"
-                  >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                    </svg>
-                  </button>
-                  <button
-                    @click="deleteContact(contact.id)"
-                    class="text-red-600 hover:text-red-900 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                    title="Excluir contato"
-                  >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Modais -->
-      <ContactModal
-        v-if="showNewContactModal || showEditContactModal"
-        :contact="editingContact"
-        @save="handleSaveContact"
-        @cancel="closeModal"
-      />
-      
-      <ImportModal
-        v-if="showImportModal"
-        @import="handleImportContacts"
-        @cancel="showImportModal = false"
-      />
+﻿<template>
+  <div class="space-y-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Contatos</h1>
+      <span class="text-sm text-gray-500">Gerencie seus contatos</span>
     </div>
+
+    <!-- Filtro e acao -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div class="relative max-w-sm w-full">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Buscar por nome, e-mail ou cidade..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <button
+          @click="openNew"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+        >
+          + Novo Contato
+        </button>
+      </div>
+    </div>
+
+    <BaseDataGrid
+      :columns="columns"
+      :rows="contacts"
+      :loading="loading"
+      empty-message="Nenhum contato encontrado."
+      :paginator="true"
+      :current-page="currentPage"
+      :total-items="totalItems"
+      :page-size="pageSize"
+      @edit="onEdit"
+      @delete="onDelete"
+      @page-change="onPageChange"
+    >
+      <template #nome="{ row }">
+        <div class="text-sm font-medium text-gray-900">{{ (row as any).nome }}</div>
+        <div class="text-sm text-gray-500">{{ (row as any).email }}</div>
+      </template>
+
+      <template #status="{ row }">
+        <span
+          class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+          :class="statusBadgeColor((row as any).status)"
+        >
+          {{ statusLabel((row as any).status) }}
+        </span>
+      </template>
+    </BaseDataGrid>
+
+    <ContactModal
+      :open="showModal"
+      :is-edition="isEdition"
+      :contact-id="selectedContactId ?? undefined"
+      @close="handleModalClose"
+      @saved="handleSaved"
+    />
+
+    <ConfirmModal
+      :open="showConfirmModal"
+      :message="confirmMessage"
+      :loading="deleteLoading"
+      @confirm="handleDeleteConfirm"
+      @cancel="showConfirmModal = false"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { Contact } from '~~/shared/types'
+import { ref, watch } from '#imports'
+import { useToast } from 'vue-toastification'
+import BaseDataGrid from '../components/BaseDataGrid.vue'
+import type { GridColumn } from '../components/BaseDataGrid.vue'
+import ContactModal from '../components/ContactModal.vue'
+import ConfirmModal from '../components/ConfirmModal.vue'
+import { useContacts } from '../composables/useContacts'
 
-definePageMeta({
-  layout: 'default'
-})
+definePageMeta({ layout: 'default' })
 
-const {
-  getContacts,
-  filterContacts,
-  createContact,
-  updateContact,
-  deleteContact: removeContact,
-  getContactsStats,
-  importFromSpreadsheet
-} = useContacts()
+const { contacts, loading, currentPage, totalItems, pageSize, searchQuery, refreshContacts, deleteContact } = useContacts()
+const toast = useToast()
 
-const searchQuery = ref('')
-const filterStatus = ref('')
-const filterSource = ref('')
-const showNewContactModal = ref(false)
-const showEditContactModal = ref(false)
-const showImportModal = ref(false)
-const editingContact = ref<Contact | null>(null)
+const showModal = ref(false)
+const isEdition = ref(false)
+const selectedContactId = ref<number | null>(null)
 
-const contactsStats = computed(() => getContactsStats())
+const showConfirmModal = ref(false)
+const confirmMessage = ref('')
+const deleteLoading = ref(false)
+const pendingDeleteId = ref<number | null>(null)
 
-const filteredContacts = computed(() => {
-  return filterContacts({
-    search: searchQuery.value,
-    status: filterStatus.value ? [filterStatus.value as Contact['status']] : undefined,
-    source: filterSource.value ? [filterSource.value] : undefined
-  })
-})
+watch(searchQuery, () => { currentPage.value = 1 })
 
-function handleSaveContact(contactData: Omit<Contact, 'id' | 'createdAt' | 'updatedAt' | 'companyId'>) {
-  if (editingContact.value) {
-    updateContact(editingContact.value.id, contactData)
+const columns: GridColumn[] = [
+  { key: 'nome',     label: 'Nome' },
+  { key: 'cargo',    label: 'Cargo' },
+  { key: 'telefone', label: 'Telefone' },
+  { key: 'cidade',   label: 'Cidade' },
+  { key: 'status',   label: 'Status' },
+  { key: 'origem',   label: 'Origem' },
+]
+
+function openNew() {
+  isEdition.value = false
+  selectedContactId.value = null
+  showModal.value = true
+}
+
+function onEdit(row: unknown) {
+  const c = row as { id: number }
+  isEdition.value = true
+  selectedContactId.value = c.id
+  showModal.value = true
+}
+
+function onDelete(row: unknown) {
+  const c = row as { id: number; nome?: string }
+  const nome = c.nome || String(c.id)
+  pendingDeleteId.value = c.id
+  confirmMessage.value = `Deseja realmente excluir o contato "${nome}"? Esta acao nao pode ser desfeita.`
+  showConfirmModal.value = true
+}
+
+async function handleDeleteConfirm() {
+  if (pendingDeleteId.value === null) return
+  deleteLoading.value = true
+  const success = await deleteContact(pendingDeleteId.value)
+  deleteLoading.value = false
+  showConfirmModal.value = false
+  pendingDeleteId.value = null
+  if (success) {
+    toast.success('Contato excluido com sucesso!')
+    refreshContacts()
   } else {
-    createContact(contactData)
-  }
-  closeModal()
-}
-
-function editContact(contact: Contact) {
-  editingContact.value = contact
-  showEditContactModal.value = true
-}
-
-function deleteContact(contactId: string) {
-  if (confirm('Tem certeza que deseja excluir este contato?')) {
-    removeContact(contactId)
+    toast.error('Erro ao excluir o contato. Tente novamente.')
   }
 }
 
-function closeModal() {
-  showNewContactModal.value = false
-  showEditContactModal.value = false
-  editingContact.value = null
+function handleModalClose() {
+  showModal.value = false
+  isEdition.value = false
+  selectedContactId.value = null
 }
 
-async function handleImportContacts(data: any[]) {
-  try {
-    const imported = await importFromSpreadsheet(data)
-    alert(`${imported} contatos importados com sucesso!`)
-    showImportModal.value = false
-  } catch (error) {
-    alert('Erro ao importar contatos')
-  }
+function handleSaved() {
+  handleModalClose()
+  refreshContacts()
 }
 
-function getStatusLabel(status: Contact['status']): string {
-  const labels: Record<Contact['status'], string> = {
-    'ativo': 'Ativo',
-    'inativo': 'Inativo',
-    'bloqueado': 'Bloqueado'
-  }
-  return labels[status] || status
+function onPageChange(page: number) {
+  currentPage.value = page
 }
 
-function getStatusBadgeColor(status: Contact['status']): string {
-  const colors: Record<Contact['status'], string> = {
-    'ativo': 'bg-green-100 text-green-800',
-    'inativo': 'bg-yellow-100 text-yellow-800',
-    'bloqueado': 'bg-red-100 text-red-800'
+function statusLabel(status: string): string {
+  const map: Record<string, string> = {
+    ativo: 'Ativo',
+    inativo: 'Inativo',
+    bloqueado: 'Bloqueado'
   }
-  return colors[status] || 'bg-gray-100 text-gray-800'
+  return map[status] ?? status
+}
+
+function statusBadgeColor(status: string): string {
+  const map: Record<string, string> = {
+    ativo: 'bg-green-100 text-green-800',
+    inativo: 'bg-yellow-100 text-yellow-800',
+    bloqueado: 'bg-red-100 text-red-800'
+  }
+  return map[status] ?? 'bg-gray-100 text-gray-800'
 }
 </script>
