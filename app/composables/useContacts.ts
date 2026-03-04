@@ -1,10 +1,10 @@
-import { ref, computed, useAsyncData } from '#imports'
-import { useSupabaseClient } from '#imports'
+import { ref, computed, useAsyncData, useSupabaseClient } from '#imports'
 import type { Database } from '../types/database'
 
 type ContatoRow = Database['public']['Tables']['contatos']['Row']
 type ContatoInsert = Database['public']['Tables']['contatos']['Insert']
 type ContatoUpdate = Database['public']['Tables']['contatos']['Update']
+type VwContatosContasRow = Database['public']['Views']['vw_contatos_contas']['Row']
 
 const PAGE_SIZE = 10
 
@@ -22,22 +22,23 @@ export const useContacts = () => {
       const from = (currentPage.value - 1) * PAGE_SIZE
       const to = from + PAGE_SIZE - 1
       let query = supabase
-        .from('contatos')
+        .from('vw_contatos_contas')
         .select('*', { count: 'exact' })
         .order('id', { ascending: false })
         .range(from, to)
 
       if (searchQuery.value.trim()) {
+        const term = searchQuery.value.trim()
         query = query.or(
-          `nome.ilike.%${searchQuery.value.trim()}%,email.ilike.%${searchQuery.value.trim()}%,cidade.ilike.%${searchQuery.value.trim()}%`
+          `nome.ilike.%${term}%,email.ilike.%${term}%,nome_fantasia.ilike.%${term}%,razao_social.ilike.%${term}%`
         )
       }
 
       const { data, count, error: sbError } = await query
       if (sbError) throw sbError
-      return { rows: (data ?? []) as ContatoRow[], total: (count ?? 0) as number }
+      return { rows: (data ?? []) as VwContatosContasRow[], total: (count ?? 0) as number }
     },
-    { watch: [currentPage, searchQuery] }
+    { server: false, watch: [currentPage, searchQuery] }
   )
 
   const contacts = computed(() => data.value?.rows ?? [])

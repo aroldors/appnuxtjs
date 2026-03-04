@@ -5,15 +5,26 @@
       
       <!-- User Menu -->
       <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-            <span class="text-sm font-medium text-gray-700">{{ userInitials }}</span>
+        <ClientOnly>
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+              <span class="text-sm font-medium text-gray-700">{{ userInitials }}</span>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-900">{{ profile?.nome || 'Usuário' }}</div>
+              <div class="text-gray-500">{{ profile?.role || 'user' }}</div>
+            </div>
           </div>
-          <div class="text-sm">
-            <div class="font-medium text-gray-900">{{ profile?.nome || 'Usuário' }}</div>
-            <div class="text-gray-500">{{ profile?.role || 'user' }}</div>
-          </div>
-        </div>
+          <template #fallback>
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
+              <div class="text-sm">
+                <div class="h-3 w-20 bg-gray-200 rounded animate-pulse mb-1" />
+                <div class="h-3 w-12 bg-gray-200 rounded animate-pulse" />
+              </div>
+            </div>
+          </template>
+        </ClientOnly>
         
         <button
           @click="logout"

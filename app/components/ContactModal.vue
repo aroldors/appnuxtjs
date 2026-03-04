@@ -22,16 +22,25 @@
         />
       </div>
 
-      <!-- Cargo / Telefone -->
+      <!-- Cargo / Conta -->
       <div>
         <BaseInput
           v-model="form.cargo"
           label="Cargo"
           placeholder="Cargo ou função"
-          :error-message="formErrors.cargo"
         />
       </div>
 
+      <div>
+        <BaseDropdown
+          v-model="form.conta"
+          label="Conta"
+          placeholder="Selecione uma conta..."
+          :options="contasOptions"
+        />
+      </div>
+
+      <!-- Telefone / E-mail -->
       <div>
         <BaseInput
           v-model="form.telefone"
@@ -42,8 +51,7 @@
         />
       </div>
 
-      <!-- E-mail -->
-      <div class="md:col-span-2">
+      <div>
         <BaseInput
           v-model="form.email"
           label="E-mail"
@@ -104,23 +112,7 @@
         </div>
       </div>
 
-      <!-- Origem -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Origem</label>
-        <select
-          v-model="form.origem"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          <option value="LinkedIn">LinkedIn</option>
-          <option value="Website">Website</option>
-          <option value="Indicacao">Indicação</option>
-          <option value="Cold Email">Cold Email</option>
-          <option value="Evento">Evento</option>
-          <option value="Importacao">Importação</option>
-        </select>
-      </div>
-
-      <!-- Status -->
+      <!-- Status / Tags -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
         <select
@@ -133,8 +125,7 @@
         </select>
       </div>
 
-      <!-- Tags -->
-      <div class="md:col-span-2">
+      <div>
         <BaseInput
           v-model="tagsInput"
           label="Tags"
@@ -142,15 +133,6 @@
         />
       </div>
 
-      <!-- Conta -->
-      <div>
-        <BaseDropdown
-          v-model="form.conta"
-          label="Conta"
-          placeholder="Selecione uma conta..."
-          :options="contasOptions"
-        />
-      </div>
     </form>
   </BaseModal>
 </template>
@@ -207,7 +189,6 @@ const form = reactive<{
   cidade: string
   estado: string
   cep: string
-  origem: string
   conta: string | number | null
   status: string
 }>({
@@ -221,7 +202,6 @@ const form = reactive<{
   cidade: '',
   estado: '',
   cep: '',
-  origem: 'LinkedIn',
   conta: null,
   status: 'ativo'
 })
@@ -240,7 +220,6 @@ function resetForm() {
   form.cidade = ''
   form.estado = ''
   form.cep = ''
-  form.origem = 'LinkedIn'
   form.conta = null
   form.status = 'ativo'
   tagsInput.value = ''
@@ -258,7 +237,6 @@ function populateForm(contato: Database['public']['Tables']['contatos']['Row']) 
   form.cidade = contato.cidade ?? ''
   form.estado = contato.estado ?? ''
   form.cep = contato.cep ?? ''
-  form.origem = contato.origem ?? 'LinkedIn'
   form.conta = contato.conta ?? null
   form.status = contato.status ?? 'ativo'
   tagsInput.value = contato.tags?.join(', ') ?? ''
@@ -296,7 +274,6 @@ async function handleSubmit() {
     cidade: form.cidade.trim() || null,
     estado: form.estado.trim() || null,
     cep: form.cep.trim() || null,
-    origem: form.origem || null,
     conta: form.conta != null ? Number(form.conta) : null,
     status: form.status,
     tags: tags.length ? tags : null

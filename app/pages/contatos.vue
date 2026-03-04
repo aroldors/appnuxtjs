@@ -12,7 +12,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Buscar por nome, e-mail ou cidade..."
+            placeholder="Buscar por nome, e-mail ou empresa..."
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
           <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -39,11 +39,18 @@
       :page-size="pageSize"
       @edit="onEdit"
       @delete="onDelete"
+      @view="onView"
       @page-change="onPageChange"
     >
       <template #nome="{ row }">
         <div class="text-sm font-medium text-gray-900">{{ (row as any).nome }}</div>
         <div class="text-sm text-gray-500">{{ (row as any).email }}</div>
+      </template>
+
+      <template #empresa="{ row }">
+        <div class="text-sm text-gray-900">
+          {{ (row as any).nome_fantasia || (row as any).razao_social || '—' }}
+        </div>
       </template>
 
       <template #status="{ row }">
@@ -55,6 +62,12 @@
         </span>
       </template>
     </BaseDataGrid>
+
+    <ContactViewModal
+      :open="showViewModal"
+      :contato="(selectedViewContact as any)"
+      @close="showViewModal = false"
+    />
 
     <ContactModal
       :open="showModal"
@@ -81,6 +94,7 @@ import BaseDataGrid from '../components/BaseDataGrid.vue'
 import type { GridColumn } from '../components/BaseDataGrid.vue'
 import ContactModal from '../components/ContactModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
+import ContactViewModal from '../components/ContactViewModal.vue'
 import { useContacts } from '../composables/useContacts'
 
 definePageMeta({ layout: 'default' })
@@ -92,6 +106,9 @@ const showModal = ref(false)
 const isEdition = ref(false)
 const selectedContactId = ref<number | null>(null)
 
+const showViewModal = ref(false)
+const selectedViewContact = ref<Record<string, unknown> | null>(null)
+
 const showConfirmModal = ref(false)
 const confirmMessage = ref('')
 const deleteLoading = ref(false)
@@ -101,17 +118,21 @@ watch(searchQuery, () => { currentPage.value = 1 })
 
 const columns: GridColumn[] = [
   { key: 'nome',     label: 'Nome' },
+  { key: 'empresa',  label: 'Empresa' },
   { key: 'cargo',    label: 'Cargo' },
   { key: 'telefone', label: 'Telefone' },
-  { key: 'cidade',   label: 'Cidade' },
   { key: 'status',   label: 'Status' },
-  { key: 'origem',   label: 'Origem' },
 ]
 
 function openNew() {
   isEdition.value = false
   selectedContactId.value = null
   showModal.value = true
+}
+
+function onView(row: unknown) {
+  selectedViewContact.value = row as Record<string, unknown>
+  showViewModal.value = true
 }
 
 function onEdit(row: unknown) {
