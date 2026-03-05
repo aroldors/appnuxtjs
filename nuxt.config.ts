@@ -4,6 +4,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@pinia/nuxt', '@nuxt/icon'],
   supabase: {
-    redirect: true // Desabilitar para usar redirecionamento manual
+    redirect: true, // Desabilitar para usar redirecionamento manual
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      exclude: ['/esqueci-senha', '/recupera-senha']
+    }
   }
 })

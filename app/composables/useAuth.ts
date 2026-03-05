@@ -72,6 +72,25 @@ export const useAuth = () => {
     }
   }
 
+  const requestPasswordReset = async (email: string) => {
+    loading.value = true
+
+    try {
+      const redirectTo = `${window.location.origin}/recupera-senha`
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
+
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: 'Erro inesperado ao solicitar recuperação de senha.' }
+    } finally {
+      loading.value = false
+    }
+  }
+
   const changePassword = async (newPassword: string) => {
     loading.value = true
 
@@ -117,6 +136,7 @@ export const useAuth = () => {
     login,
     logout,
     changePassword,
+    requestPasswordReset,
     updateProfile
   }
 }
