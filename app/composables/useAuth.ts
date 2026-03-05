@@ -34,6 +34,66 @@ export const useAuth = () => {
     }
   }
 
+  const updateProfile = async (params: {
+    nome?: string
+    cpf?: string
+    identificacao?: string
+    endereco?: string
+    numero?: string
+    bairro?: string
+    cidade?: string
+    uf?: string
+    telefone?: string
+  }) => {
+    loading.value = true
+
+    try {
+      const { data, error } = await (supabase as any).rpc('update_user_profile', {
+        p_nome: params.nome ?? null,
+        p_identificacao: params.identificacao ?? null,
+        p_cpf: params.cpf ?? null,
+        p_endereco: params.endereco ?? null,
+        p_numero: params.numero ?? null,
+        p_bairro: params.bairro ?? null,
+        p_cidade: params.cidade ?? null,
+        p_uf: params.uf ?? null,
+        p_telefone: params.telefone ?? null,
+      })
+
+      if (error) {
+        return { success: false, message: error.message }
+      }
+
+      return data as { success: boolean; message: string }
+    } catch (err) {
+      return { success: false, message: 'Erro inesperado ao atualizar o perfil.' }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const changePassword = async (newPassword: string) => {
+    loading.value = true
+
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword })
+
+      if (error) {
+        const mensagens: Record<string, string> = {
+          'New password should be different from the old password': 'A nova senha deve ser diferente da senha atual.',
+          'Password should be at least 6 characters.': 'A senha deve ter no mínimo 6 caracteres.',
+        }
+        return { success: false, error: mensagens[error.message] ?? error.message }
+      }
+
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: 'Erro inesperado ao alterar a senha' }
+    } finally {
+      loading.value = false
+    }
+  }
+
   const logout = async () => {
     loading.value = true
     
@@ -55,6 +115,8 @@ export const useAuth = () => {
     isAuthenticated,
     loading: readonly(loading),
     login,
-    logout
+    logout,
+    changePassword,
+    updateProfile
   }
 }
