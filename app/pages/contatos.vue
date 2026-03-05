@@ -49,7 +49,7 @@
 
       <template #empresa="{ row }">
         <div class="text-sm text-gray-900">
-          {{ (row as any).nome_fantasia || (row as any).razao_social || '—' }}
+          {{ (row as any).empresa || '—' }}
         </div>
       </template>
 

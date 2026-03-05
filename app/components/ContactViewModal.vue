@@ -140,10 +140,10 @@
           </div>
 
           <!-- Footer -->
-          <div class="px-6 py-4 border-t border-gray-100 bg-white flex justify-end">
+          <div class="px-6 py-4 border-t border-gray-100 bg-white flex justify-center">
             <button
               type="button"
-              class="px-6 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 active:scale-95 transition-all"
+              class="px-32 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 active:scale-95 transition-all"
               @click="emit('close')"
             >
               OK

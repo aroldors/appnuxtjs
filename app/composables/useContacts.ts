@@ -30,7 +30,7 @@ export const useContacts = () => {
       if (searchQuery.value.trim()) {
         const term = searchQuery.value.trim()
         query = query.or(
-          `nome.ilike.%${term}%,email.ilike.%${term}%,nome_fantasia.ilike.%${term}%,razao_social.ilike.%${term}%`
+          `nome.ilike.%${term}%,email.ilike.%${term}%,empresa.ilike.%${term}%`
         )
       }
 
