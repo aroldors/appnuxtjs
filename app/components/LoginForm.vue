@@ -25,7 +25,17 @@
         </template>
       </BaseInput>
 
-      <div>
+      <div class="space-y-2">
+        <!-- Link Esqueci a Senha -->
+        <div class="text-right">
+          <a
+            href="#"
+            class="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200"
+          >
+            Esqueceu sua senha?
+          </a>
+        </div>
+
         <button
           type="submit"
           :disabled="authLoading"
@@ -34,16 +44,17 @@
           <span v-if="authLoading">Entrando...</span>
           <span v-else>Entrar</span>
         </button>
-      </div>
 
-      <!-- Link Esqueceu a Senha -->
-      <div class="text-center">
-        <a 
-          href="#" 
-          class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-        >
-          Esqueceu sua senha?
-        </a>
+        <!-- Link Criar Conta -->
+        <div class="text-center text-sm text-gray-500">
+          Não tem uma conta?
+          <NuxtLink
+            to="/criar-conta"
+            class="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200"
+          >
+            Criar conta
+          </NuxtLink>
+        </div>
       </div>
     </form>
 
