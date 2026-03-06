@@ -22,8 +22,9 @@
           <!-- Register Form -->
           <div class="mt-8">
             <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-              <form class="space-y-6">
+              <form class="space-y-6" @submit.prevent="handleRegister">
                 <BaseInput
+                  v-model="form.email"
                   label="E-mail"
                   type="email"
                   autocomplete="email"
@@ -36,6 +37,7 @@
                 </BaseInput>
 
                 <BaseInput
+                  v-model="form.password"
                   label="Senha"
                   type="password"
                   autocomplete="new-password"
@@ -48,6 +50,7 @@
                 </BaseInput>
 
                 <BaseInput
+                  v-model="form.confirmPassword"
                   label="Confirmar senha"
                   type="password"
                   autocomplete="new-password"
@@ -59,12 +62,15 @@
                   </template>
                 </BaseInput>
 
+                <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
+
                 <div>
                   <button
                     type="submit"
-                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                    :disabled="loading"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Criar conta
+                    {{ loading ? 'Criando conta...' : 'Criar conta' }}
                   </button>
                 </div>
               </form>
@@ -120,12 +126,83 @@
       </div>
     </div>
   </div>
+
+  <!-- Email confirmation modal -->
+  <BaseModal
+    id="email-confirm-modal"
+    :open="showEmailConfirm"
+    size="sm"
+    :disable-backdrop-close="true"
+    @close="navigateTo('/login')"
+  >
+    <template #header>
+      <span />
+    </template>
+
+    <div class="flex flex-col items-center text-center py-2">
+      <div class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-5">
+        <EnvelopeIcon class="h-8 w-8 text-blue-600" />
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-3">Confirme seu email</h3>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        Enviamos um email de confirmação para
+        <span class="font-medium text-gray-900">{{ registeredEmail }}</span>.
+        Verifique sua caixa de entrada e clique no link para ativar sua conta.
+        Após a confirmação, você poderá fazer login normalmente.
+      </p>
+    </div>
+
+    <template #footer>
+      <BaseButton variant="primary" class="w-full" @click="navigateTo('/login')">
+        Entrar
+      </BaseButton>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/vue/24/outline'
+import { useAuth } from '~/composables/useAuth'
+import BaseModal from '~/components/BaseModal.vue'
+import BaseButton from '~/components/BaseButton.vue'
 
 definePageMeta({
   layout: false
 })
+
+const { register, loading } = useAuth()
+
+const form = reactive({
+  email: '',
+  password: '',
+  confirmPassword: ''
+})
+
+const errorMessage = ref('')
+const showEmailConfirm = ref(false)
+const registeredEmail = ref('')
+
+async function handleRegister() {
+  errorMessage.value = ''
+
+  if (form.password !== form.confirmPassword) {
+    errorMessage.value = 'As senhas não coincidem.'
+    return
+  }
+
+  if (form.password.length < 6) {
+    errorMessage.value = 'A senha deve ter no mínimo 6 caracteres.'
+    return
+  }
+
+  const result = await register(form.email, form.password)
+
+  if (!result.success) {
+    errorMessage.value = result.error ?? 'Erro ao criar a conta.'
+    return
+  }
+
+  registeredEmail.value = form.email
+  showEmailConfirm.value = true
+}
 </script>

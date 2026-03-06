@@ -113,6 +113,37 @@ export const useAuth = () => {
     }
   }
 
+  const register = async (email: string, password: string) => {
+    loading.value = true
+
+    try {
+      const emailRedirectTo = `${window.location.origin}/confirm`
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo }
+      })
+
+      if (error) {
+        const mensagens: Record<string, string> = {
+          'User already registered': 'Este e-mail já está cadastrado.',
+          'Password should be at least 6 characters.': 'A senha deve ter no mínimo 6 caracteres.',
+        }
+        return { success: false, error: mensagens[error.message] ?? error.message }
+      }
+
+      if (data.user) {
+        return { success: true }
+      }
+
+      return { success: false, error: 'Erro ao criar a conta.' }
+    } catch (err) {
+      return { success: false, error: 'Erro inesperado ao criar a conta.' }
+    } finally {
+      loading.value = false
+    }
+  }
+
   const logout = async () => {
     loading.value = true
     
@@ -134,6 +165,7 @@ export const useAuth = () => {
     isAuthenticated,
     loading: readonly(loading),
     login,
+    register,
     logout,
     changePassword,
     requestPasswordReset,

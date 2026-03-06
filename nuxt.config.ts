@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      exclude: ['/esqueci-senha', '/recupera-senha', '/criar-conta']
+      exclude: ['/esqueci-senha', '/recupera-senha', '/criar-conta', '/confirm']
     }
   }
 })
