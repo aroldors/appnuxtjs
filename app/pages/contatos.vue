@@ -96,6 +96,9 @@ import ContactModal from '../components/ContactModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
 import ContactViewModal from '../components/ContactViewModal.vue'
 import { useContacts } from '../composables/useContacts'
+import type { Database } from '../types/database'
+
+type VwContatosContasRow = Database['public']['Views']['vw_contatos_contas']['Row']
 
 definePageMeta({ layout: 'default' })
 
@@ -107,7 +110,7 @@ const isEdition = ref(false)
 const selectedContactId = ref<number | null>(null)
 
 const showViewModal = ref(false)
-const selectedViewContact = ref<Record<string, unknown> | null>(null)
+const selectedViewContact = ref<VwContatosContasRow | null>(null)
 
 const showConfirmModal = ref(false)
 const confirmMessage = ref('')
@@ -131,7 +134,7 @@ function openNew() {
 }
 
 function onView(row: unknown) {
-  selectedViewContact.value = row as Record<string, unknown>
+  selectedViewContact.value = row as VwContatosContasRow
   showViewModal.value = true
 }
 

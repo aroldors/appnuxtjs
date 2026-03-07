@@ -208,6 +208,29 @@ export interface Database {
           updated_at?: string | null
         }
       }
+      especialidades: {
+        Row: {
+          id: number
+          descricao: string | null
+          user_id: string | null
+          created_at: string
+          upated_at: string | null
+        }
+        Insert: {
+          id?: number
+          descricao?: string | null
+          user_id?: string | null
+          created_at?: string
+          upated_at?: string | null
+        }
+        Update: {
+          id?: number
+          descricao?: string | null
+          user_id?: string | null
+          created_at?: string
+          upated_at?: string | null
+        }
+      }
       users: {
         Row: {
           id: number

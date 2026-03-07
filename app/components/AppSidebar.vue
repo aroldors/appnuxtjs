@@ -50,9 +50,27 @@
         </NuxtLink>
 
         <NuxtLink
+          to="/especialidades"
+          class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
+          :class="isActivePath('/especialidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+        >
+          <AcademicCapIcon class="mr-3 h-5 w-5" />
+          Especialidades
+        </NuxtLink>
+
+        <NuxtLink
+          to="/profissionais"
+          class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
+          :class="isActivePath('/profissionais') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+        >
+          <UserGroupIcon class="mr-3 h-5 w-5" />
+          Profissionais
+        </NuxtLink>
+
+        <NuxtLink
           to="/mensagens"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/mensagens') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          :class="isActivePath('/mensagens') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
         >
           <ChatBubbleLeftEllipsisIcon class="mr-3 h-5 w-5" />
           Modelos de Mensagens
@@ -61,7 +79,7 @@
         <NuxtLink
           to="/configuracoes"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/configuracoes') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          :class="isActivePath('/configuracoes') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
         >
           <Cog6ToothIcon class="mr-3 h-5 w-5" />
           Configurações
@@ -124,6 +142,8 @@ import {
   FunnelIcon, 
   UsersIcon, 
   BuildingOfficeIcon,
+  AcademicCapIcon,
+  UserGroupIcon,
   ChatBubbleLeftEllipsisIcon, 
   Cog6ToothIcon,
   EnvelopeIcon 
