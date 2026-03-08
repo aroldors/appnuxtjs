@@ -284,8 +284,42 @@ export interface Database {
           updated_at?: string | null
         }
       }
+      profissionais: {
+        Row: {
+          id: number
+          usuario_id: number | null
+          especialidade_id: number | null
+          user_id: string | null
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: number
+          usuario_id?: number | null
+          especialidade_id?: number | null
+          user_id?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: number
+          usuario_id?: number | null
+          especialidade_id?: number | null
+          user_id?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+      }
     }
     Views: {
+      vw_profissionais: {
+        Row: {
+          id: number
+          nome: string | null
+          identificacao: string | null
+          especialidade: string | null
+        }
+      }
       vw_contatos_contas: {
         Row: {
           id: number
