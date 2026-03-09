@@ -28,9 +28,10 @@ export const useLeads = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any
   const leads = useState<Lead[]>('leads.data', () => [])
-  const loading = ref(false)
+  const loading = useState<boolean>('leads.loading', () => false)
 
   const fetchLeads = async () => {
+    if (loading.value) return
     loading.value = true
     try {
       const { data, error } = await supabase

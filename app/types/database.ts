@@ -231,7 +231,7 @@ export interface Database {
           upated_at?: string | null
         }
       }
-      users: {
+      usuarios: {
         Row: {
           id: number
           cpf: string | null

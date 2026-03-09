@@ -1,6 +1,6 @@
 import type { Database } from '../types/database'
 
-export type UserProfile = Database['public']['Tables']['users']['Row']
+export type UserProfile = Database['public']['Tables']['usuarios']['Row']
 
 export const useUserStore = defineStore('user', () => {
   // Estado
@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
       error.value = null
 
       const { data, error: fetchError } = await supabase
-        .from('users')
+        .from('usuarios')
         .select('*')
         .eq('user_id', userId)
         .single()
@@ -73,7 +73,7 @@ export const useUserStore = defineStore('user', () => {
       // Temporariamente usando any para contornar problema de tipagem do Supabase
       const supabaseAny = supabase as any
       const { data, error: updateError } = await supabaseAny
-        .from('users')
+        .from('usuarios')
         .update({
           ...updates,
           updated_at: new Date().toISOString()
@@ -110,7 +110,7 @@ export const useUserStore = defineStore('user', () => {
       // Temporariamente usando any para contornar problema de tipagem do Supabase
       const supabaseAny = supabase as any
       const { data, error: createError } = await supabaseAny
-        .from('users')
+        .from('usuarios')
         .insert({
           ...profileData,
           user_id: supabaseUser.value.id || supabaseUser.value.sub,
