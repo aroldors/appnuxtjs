@@ -238,7 +238,7 @@
       <!-- Modal Adicionar Usuário -->
       <UserModal
         v-if="showNewUserModal"
-        @save="handleAddUser"
+        @saved="handleUserSaved"
         @cancel="showNewUserModal = false"
       />
     </div>
@@ -339,17 +339,8 @@ function resetCompanyForm() {
   companyForm.currency = currentCompany.value?.currency || 'BRL'
 }
 
-function handleAddUser(userData: { name: string; email: string; role: User['role'] }) {
-  const newUser = {
-    id: `user-${Date.now()}`,
-    ...userData,
-    companyId: currentCompany.value?.id || 'company-1',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
-  companyUsers.value.push(newUser)
+function handleUserSaved() {
   showNewUserModal.value = false
-  alert('Usuário adicionado com sucesso!')
 }
 
 function removeUser(userId: string) {

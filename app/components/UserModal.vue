@@ -44,21 +44,6 @@
             </select>
           </div>
           
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Senha Temporária *
-            </label>
-            <input
-              v-model="form.password"
-              type="password"
-              required
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-            <p class="text-xs text-gray-500 mt-1">
-              O usuário deverá alterar a senha no primeiro acesso
-            </p>
-          </div>
-          
           <div class="flex justify-end space-x-3 pt-4">
             <button
               type="button"
@@ -69,9 +54,10 @@
             </button>
             <button
               type="submit"
-              class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+              :disabled="loading"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Adicionar Usuário
+              {{ loading ? 'Enviando...' : 'Enviar convite' }}
             </button>
           </div>
         </form>
@@ -81,23 +67,38 @@
 </template>
 
 <script setup lang="ts">
+import { useToast } from 'vue-toastification'
 import type { User } from '~~/shared/types'
 
 interface Emits {
-  (e: 'save', data: { name: string; email: string; role: User['role']; password: string }): void
+  (e: 'saved'): void
   (e: 'cancel'): void
 }
 
 const emit = defineEmits<Emits>()
+const toast = useToast()
 
 const form = reactive({
   name: '',
   email: '',
-  role: 'vendedor' as User['role'],
-  password: ''
+  role: 'vendedor' as User['role']
 })
 
-function handleSubmit() {
-  emit('save', { ...form })
+const loading = ref(false)
+
+async function handleSubmit() {
+  loading.value = true
+  try {
+    await $fetch('/api/users/invite', {
+      method: 'POST',
+      body: { email: form.email, nome: form.name, role: form.role }
+    })
+    toast.success('Convite enviado com sucesso!')
+    emit('saved')
+  } catch (err: any) {
+    toast.error(`Erro ao enviar convite: ${err?.data?.statusMessage || 'Erro inesperado'}`)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
