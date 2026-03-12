@@ -7,14 +7,9 @@
           <!-- Logo and Header -->
           <div class="text-center">
             <div class="flex justify-center">
-              <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span class="text-white font-bold text-xl">P</span>
-              </div>
+              <img src="/Prospector_Logo.png" alt="Prospector" class="w-auto object-contain" style="height: 85px" />
             </div>
-            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
-              Esqueci minha senha
-            </h2>
-            <p class="mt-2 text-sm text-gray-600">
+            <p class="mt-4 text-sm text-gray-600">
               Informe seu e-mail e enviaremos um link para redefinir sua senha.
             </p>
           </div>

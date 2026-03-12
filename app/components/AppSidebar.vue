@@ -1,13 +1,8 @@
 <template>
   <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
     <!-- Logo -->
-    <div class="flex items-center px-6 h-[73px] border-b border-gray-200">
-      <div class="flex items-center space-x-2">
-        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <span class="text-white font-bold text-sm">P</span>
-        </div>
-        <span class="text-xl font-bold text-gray-900">Prospector</span>
-      </div>
+    <div class="flex items-center justify-center h-[73px] border-b border-gray-200 px-4">
+      <img src="/Prospector_Logo.png" alt="Prospector" class="h-full w-full object-contain py-2" />
     </div>
 
     <!-- Navigation Menu -->
