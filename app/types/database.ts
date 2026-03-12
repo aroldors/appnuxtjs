@@ -245,7 +245,8 @@ export interface Database {
           telefone: string | null
           role: string
           ativo: boolean
-          user_id: string
+          user_id: string | null
+          usuario_auth: string | null
           created_at: string
           updated_at: string | null
         }
@@ -260,9 +261,10 @@ export interface Database {
           cidade?: string | null
           uf?: string | null
           telefone?: string | null
-          role: string
+          role?: string
           ativo?: boolean
-          user_id: string
+          user_id?: string | null
+          usuario_auth?: string | null
           created_at?: string
           updated_at?: string | null
         }
@@ -279,7 +281,8 @@ export interface Database {
           telefone?: string | null
           role?: string
           ativo?: boolean
-          user_id?: string
+          user_id?: string | null
+          usuario_auth?: string | null
           created_at?: string
           updated_at?: string | null
         }

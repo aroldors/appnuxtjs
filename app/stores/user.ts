@@ -40,7 +40,7 @@ export const useUserStore = defineStore('user', () => {
       const { data, error: fetchError } = await supabase
         .from('usuarios')
         .select('*')
-        .eq('user_id', userId)
+        .eq('usuario_auth', userId)
         .single()
 
       if (fetchError) {
@@ -113,7 +113,7 @@ export const useUserStore = defineStore('user', () => {
         .from('usuarios')
         .insert({
           ...profileData,
-          user_id: supabaseUser.value.id || supabaseUser.value.sub,
+          usuario_auth: supabaseUser.value.id || supabaseUser.value.sub,
         })
         .select()
         .single()
