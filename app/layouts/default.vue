@@ -4,12 +4,12 @@
     <AppSidebar />
 
     <!-- Main Content -->
-    <div class="pl-64">
+    <div class="pl-64 flex flex-col h-screen">
       <!-- Header Component -->
       <AppHeader />
 
       <!-- Page Content -->
-      <main class="p-6">
+      <main class="p-6 flex flex-col flex-1 overflow-auto">
         <slot />
       </main>
     </div>

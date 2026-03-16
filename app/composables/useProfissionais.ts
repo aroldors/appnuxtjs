@@ -58,6 +58,23 @@ export const useProfissionais = () => {
     }
   }
 
+  const fetchProfissionalByUsuarioId = async (usuarioId: number): Promise<VwProfissionalRow | null> => {
+    error.value = null
+    try {
+      const { data, error: sbError } = await supabase
+        .from('vw_profissionais')
+        .select('*')
+        .eq('id', usuarioId)
+        .maybeSingle()
+      if (sbError) throw sbError
+      return data as VwProfissionalRow | null
+    } catch (err) {
+      console.error('[useProfissionais] Erro ao buscar profissional por usuario_id:', err)
+      error.value = 'Erro ao buscar profissional.'
+      return null
+    }
+  }
+
   return {
     profissionais,
     loading,
@@ -67,6 +84,7 @@ export const useProfissionais = () => {
     pageSize,
     searchQuery,
     refreshProfissionais,
-    fetchProfissionalById
+    fetchProfissionalById,
+    fetchProfissionalByUsuarioId
   }
 }

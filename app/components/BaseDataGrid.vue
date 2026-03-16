@@ -2,7 +2,7 @@
   <div id="base-data-grid" class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
     <!-- Table wrapper com overlay de loading -->
     <div class="relative overflow-x-auto">
-      <!-- Overlay semi-transparente durante paginação -->
+      <!-- Overlay semi-transparente durante carregamento -->
       <div
         v-if="loading"
         class="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-[1px]"
@@ -13,13 +13,8 @@
         </svg>
       </div>
 
-      <!-- Loading inicial (sem dados ainda) -->
-      <div v-if="loading && rows.length === 0" class="flex items-center justify-center py-16">
-        <span class="ml-2 text-sm text-gray-500">Carregando...</span>
-      </div>
-
-      <!-- Table -->
-      <table v-else class="min-w-full divide-y divide-gray-200">
+      <!-- Table (sempre renderizada para evitar hydration mismatch) -->
+      <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-blue-50">
           <tr>
             <th
@@ -37,7 +32,7 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <!-- Empty state -->
-          <tr v-if="rows.length === 0">
+          <tr v-if="!loading && rows.length === 0">
             <td :colspan="columns.length + (showActions ? 1 : 0)" class="px-6 py-12 text-center text-sm text-gray-400">
               {{ emptyMessage }}
             </td>
