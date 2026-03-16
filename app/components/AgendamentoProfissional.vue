@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useProfissionais } from '~/composables/useProfissionais'
 import { useUserStore } from '~/stores/user'
 import type { Database } from '~/types/database'
@@ -32,11 +32,14 @@ const { fetchProfissionalByUsuarioId } = useProfissionais()
 const profissional = ref<VwProfissionalRow | null>(null)
 const loading = ref(false)
 
-onMounted(async () => {
-  const usuarioId = userStore.profile?.id
-  if (!usuarioId) return
-  loading.value = true
-  profissional.value = await fetchProfissionalByUsuarioId(usuarioId)
-  loading.value = false
-})
+watch(
+  () => userStore.profile?.id,
+  async (id) => {
+    if (!id) return
+    loading.value = true
+    profissional.value = await fetchProfissionalByUsuarioId(id)
+    loading.value = false
+  },
+  { immediate: true }
+)
 </script>

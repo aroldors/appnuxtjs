@@ -1,7 +1,7 @@
 <template>
   <div id="agendamento-manager" class="flex flex-col h-full">
-    <!-- Header -->
-    <div class="border-2 border-dashed border-blue-500 h-[100px] shrink-0 grid grid-cols-3 items-center px-4">
+    <!-- Header linha 1: controles -->
+    <div class="shrink-0 grid grid-cols-3 items-center px-4 py-3">
       <AgendamentoControle class="col-start-1 justify-self-start" />
       <AgendamentoProfissional class="col-start-2 justify-self-center" />
       <div class="col-start-3 justify-self-end">
@@ -14,18 +14,40 @@
       </div>
     </div>
 
+    <!-- Header linha 2: dias da semana (sem px-4 para alinhar com as colunas do body) -->
+    <AgendamentoDiasSemana :dias="store.diasSemana" class="shrink-0" />
+
     <!-- Body -->
-    <div class="border-2 border-dashed border-green-500 flex-1 flex items-center px-4">
-      <span class="text-green-500 text-sm font-medium">Body — ocupa o restante do espaço</span>
+    <div class="flex-1 flex overflow-y-auto">
+      <AgendamentoReguaHorarios :slot-height="slotHeight" />
+      <div class="flex flex-1 border-l border-gray-200">
+        <AgendamentoItemAgendado
+          v-for="(dia, index) in store.diasSemana"
+          :key="index"
+          :dia="dia"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { PlusIcon } from '@heroicons/vue/24/outline'
 import AgendamentoControle from '~/components/AgendamentoControle.vue'
 import AgendamentoProfissional from '~/components/AgendamentoProfissional.vue'
+import AgendamentoDiasSemana from '~/components/AgendamentoDiasSemana.vue'
+import AgendamentoReguaHorarios from '~/components/AgendamentoReguaHorarios.vue'
+import AgendamentoItemAgendado from '~/components/AgendamentoItemAgendado.vue'
 import BaseButton from '~/components/BaseButton.vue'
+import { useAgendamentosStore } from '~/stores/agendamentos'
+
+const store = useAgendamentosStore()
+const slotHeight = 80
+
+onMounted(() => {
+  store.$reset()
+})
 
 function onNovo(): void {
   // TODO: abrir modal de criação

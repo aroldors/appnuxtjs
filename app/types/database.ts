@@ -318,6 +318,7 @@ export interface Database {
       vw_profissionais: {
         Row: {
           id: number
+          usuario_id: number | null
           nome: string | null
           identificacao: string | null
           especialidade: string | null
