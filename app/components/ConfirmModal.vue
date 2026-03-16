@@ -10,7 +10,7 @@
     @close="emit('cancel')"
     @confirm="emit('confirm')"
   >
-    <p class="text-sm text-gray-600">{{ message }}</p>
+    <p class="text-sm text-gray-600" v-html="message" />
   </BaseModal>
 </template>
 

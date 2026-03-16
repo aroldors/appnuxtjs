@@ -1,8 +1,10 @@
-import { ref, computed, useAsyncData } from '#imports'
-import { useSupabaseClient } from '#imports'
+import { ref, computed, useAsyncData, useSupabaseClient } from '#imports'
 import type { Database } from '../types/database'
 
 type VwProfissionalRow = Database['public']['Views']['vw_profissionais']['Row']
+type ProfissionalRow = Database['public']['Tables']['profissionais']['Row']
+type ProfissionalInsert = Database['public']['Tables']['profissionais']['Insert']
+type ProfissionalUpdate = Database['public']['Tables']['profissionais']['Update']
 
 const PAGE_SIZE = 10
 
@@ -64,13 +66,82 @@ export const useProfissionais = () => {
       const { data, error: sbError } = await supabase
         .from('vw_profissionais')
         .select('*')
-        .eq('id', usuarioId)
+        .eq('usuario_id', usuarioId)
         .maybeSingle()
       if (sbError) throw sbError
       return data as VwProfissionalRow | null
     } catch (err) {
       console.error('[useProfissionais] Erro ao buscar profissional por usuario_id:', err)
       error.value = 'Erro ao buscar profissional.'
+      return null
+    }
+  }
+
+  const fetchProfissionalBaseById = async (id: number): Promise<ProfissionalRow | null> => {
+    error.value = null
+    try {
+      const { data, error: sbError } = await supabase
+        .from('profissionais')
+        .select('*')
+        .eq('id', id)
+        .single()
+      if (sbError) throw sbError
+      return data as ProfissionalRow
+    } catch (err) {
+      console.error('[useProfissionais] Erro ao buscar profissional base por id:', err)
+      error.value = 'Erro ao buscar profissional.'
+      return null
+    }
+  }
+
+  const deleteProfissional = async (id: number): Promise<boolean> => {
+    error.value = null
+    try {
+      const { error: sbError } = await supabase
+        .from('profissionais')
+        .delete()
+        .eq('id', id)
+      if (sbError) throw sbError
+      return true
+    } catch (err) {
+      console.error('[useProfissionais] Erro ao deletar profissional:', err)
+      error.value = 'Erro ao deletar profissional.'
+      return false
+    }
+  }
+
+  const insertProfissional = async (profissional: ProfissionalInsert): Promise<ProfissionalRow | null> => {
+    error.value = null
+    try {
+      const { data, error: sbError } = await supabase
+        .from('profissionais')
+        .insert(profissional)
+        .select()
+        .single()
+      if (sbError) throw sbError
+      return data as ProfissionalRow
+    } catch (err) {
+      console.error('[useProfissionais] Erro ao inserir profissional:', err)
+      error.value = 'Erro ao inserir profissional.'
+      return null
+    }
+  }
+
+  const updateProfissional = async (id: number, updates: ProfissionalUpdate): Promise<ProfissionalRow | null> => {
+    error.value = null
+    try {
+      const { data, error: sbError } = await supabase
+        .from('profissionais')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .maybeSingle()
+      if (sbError) throw sbError
+      return (data as ProfissionalRow) ?? null
+    } catch (err: unknown) {
+      console.error('[useProfissionais] Erro ao atualizar profissional:', err)
+      const e = err as Record<string, unknown>
+      error.value = (e?.message as string) ?? JSON.stringify(err)
       return null
     }
   }
@@ -85,6 +156,10 @@ export const useProfissionais = () => {
     searchQuery,
     refreshProfissionais,
     fetchProfissionalById,
-    fetchProfissionalByUsuarioId
+    fetchProfissionalByUsuarioId,
+    fetchProfissionalBaseById,
+    insertProfissional,
+    updateProfissional,
+    deleteProfissional
   }
 }
