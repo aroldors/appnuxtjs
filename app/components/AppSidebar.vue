@@ -2,7 +2,7 @@
   <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
     <!-- Logo -->
     <div class="flex items-center justify-center h-[73px] border-b border-gray-200 px-4">
-      <img src="/Prospector_Logo.png" alt="Prospector" class="h-full w-full object-contain py-2" />
+      <img src="/Prospectra_Logo.png" alt="Prospectra" class="h-full w-full object-contain py-2" />
     </div>
 
     <!-- Navigation Menu -->
@@ -44,8 +44,16 @@
           Contas
         </NuxtLink>
 
-        <NuxtLink
-          to="/especialidades"
+        <NuxtLink          
+          to="/agendamentos"
+          class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
+          :class="isActivePath('/agendamentos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+        >
+          <CalendarDaysIcon class="mr-3 h-5 w-5" />
+          Agendamentos
+        </NuxtLink>
+
+        <NuxtLink          to="/especialidades"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="isActivePath('/especialidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
         >
@@ -137,6 +145,7 @@ import {
   FunnelIcon, 
   UsersIcon, 
   BuildingOfficeIcon,
+  CalendarDaysIcon,
   AcademicCapIcon,
   UserGroupIcon,
   ChatBubbleLeftEllipsisIcon, 

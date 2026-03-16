@@ -15,7 +15,7 @@
               Complete seu cadastro
             </h2>
             <p class="mt-2 text-sm text-gray-600">
-              Confirme seu nome e defina uma senha para acessar o Prospector
+              Confirme seu nome e defina uma senha para acessar o Prospectra
             </p>
           </div>
 
@@ -98,7 +98,7 @@
             </h3>
             <div class="space-y-4 text-blue-100">
               <p class="text-lg leading-relaxed">
-                Você foi convidado para acessar o Prospector. Complete seu cadastro para começar.
+                Você foi convidado para acessar o Prospectra. Complete seu cadastro para começar.
               </p>
               <div class="border-l-4 border-blue-300 pl-4 text-left">
                 <p class="font-medium">✓ Confirme seu nome</p>
@@ -107,7 +107,7 @@
               </div>
             </div>
             <div class="mt-8 text-sm text-blue-200">
-              <p>Prospector - Sua ferramenta completa de CRM</p>
+              <p>Prospectra - Sua ferramenta completa de CRM</p>
             </div>
           </div>
         </div>

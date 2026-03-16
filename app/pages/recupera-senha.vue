@@ -7,7 +7,7 @@
           <!-- Logo and Header -->
           <div class="text-center mb-8">
             <div class="flex justify-center">
-              <img src="/Prospector_Logo.png" alt="Prospector" class="w-auto object-contain" style="height: 85px" />
+              <img src="/Prospectra_Logo.png" alt="Prospectra" class="w-auto object-contain" style="height: 85px" />
             </div>
             <p class="mt-4 text-sm text-gray-600">
               Escolha uma nova senha para sua conta.
@@ -58,7 +58,7 @@
             </div>
 
             <div class="mt-8 text-sm text-blue-200">
-              <p>Prospector - Sua ferramenta completa de CRM</p>
+              <p>Prospectra - Sua ferramenta completa de CRM</p>
             </div>
           </div>
         </div>

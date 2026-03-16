@@ -102,7 +102,7 @@ const pageTitle = computed(() => {
     '/perfil': 'Meu Perfil',
     '/teste': 'Teste de Componentes'
   }
-  return titles[route.path] || 'Prospector'
+  return titles[route.path] || 'Prospectra'
 })
 
 const userInitials = computed(() => {
