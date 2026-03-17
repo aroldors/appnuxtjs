@@ -26,6 +26,10 @@ import type { Database } from '~/types/database'
 
 type VwProfissionalRow = Database['public']['Views']['vw_profissionais']['Row']
 
+const emit = defineEmits<{
+  (e: 'loaded', profissional: VwProfissionalRow | null): void
+}>()
+
 const userStore = useUserStore()
 const { fetchProfissionalByUsuarioId } = useProfissionais()
 
@@ -39,6 +43,7 @@ watch(
     loading.value = true
     profissional.value = await fetchProfissionalByUsuarioId(id)
     loading.value = false
+    emit('loaded', profissional.value)
   },
   { immediate: true }
 )

@@ -1,7 +1,10 @@
 <template>
-  <div id="agendamento-dia-item" class="flex flex-col items-center justify-center gap-0.5 py-2 border-r border-gray-200 last:border-r-0">
-    <span class="text-sm font-bold text-gray-800 leading-none">{{ numeroDia }}</span>
-    <span class="text-xs text-gray-500 capitalize">{{ nomeDia }}</span>
+  <div
+    id="agendamento-dia-item"
+    class="flex flex-col items-center justify-center gap-0.5 py-2 rounded-t-lg bg-indigo-50/50 cursor-pointer transition-colors duration-150 hover:bg-indigo-50"
+  >
+    <span class="text-sm font-bold text-indigo-800 leading-none">{{ numeroDia }}</span>
+    <span class="text-xs text-indigo-400 capitalize">{{ nomeDia }}</span>
   </div>
 </template>
 
