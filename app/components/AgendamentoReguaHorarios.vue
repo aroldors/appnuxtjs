@@ -17,10 +17,12 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  slotHeight: 80
+  slotHeight: 160
 })
 
-const horarios = Array.from({ length: 24 }, (_, i) =>
-  `${String(i).padStart(2, '0')}:00`
+const horaInicio = 6
+const horaFim = 22
+const horarios = Array.from({ length: horaFim - horaInicio + 1 }, (_, i) =>
+  `${String(i + horaInicio).padStart(2, '0')}:00`
 )
 </script>

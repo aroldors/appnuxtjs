@@ -25,6 +25,8 @@
           v-for="(dia, index) in store.diasSemana"
           :key="index"
           :dia="dia"
+          :agendamentos="agendamentos"
+          :slot-height="slotHeight"
         />
       </div>
     </div>
@@ -32,8 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { PlusIcon } from '@heroicons/vue/24/outline'
+import type { Database } from '~/types/database'
 import AgendamentoControle from '~/components/AgendamentoControle.vue'
 import AgendamentoProfissional from '~/components/AgendamentoProfissional.vue'
 import AgendamentoDiasSemana from '~/components/AgendamentoDiasSemana.vue'
@@ -43,7 +46,8 @@ import BaseButton from '~/components/BaseButton.vue'
 import { useAgendamentosStore } from '~/stores/agendamentos'
 
 const store = useAgendamentosStore()
-const slotHeight = 80
+const slotHeight = 160
+const agendamentos = ref<Database['public']['Tables']['agendamentos']['Row'][]>([])
 
 onMounted(() => {
   store.$reset()

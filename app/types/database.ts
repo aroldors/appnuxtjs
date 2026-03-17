@@ -313,6 +313,77 @@ export interface Database {
           updated_at?: string | null
         }
       }
+      agendamentos: {
+        Row: {
+          id: number
+          titulo: string | null
+          descricao: string | null
+          profissional_id: number | null
+          cliente_id: number | null
+          telefone: string | null
+          data: string | null
+          hora_inicio: string | null
+          hora_termino: string | null
+          cancelado: boolean | null
+          cancelado_as: string | null
+          duracao: number | null
+          status: string | null
+          nome_profissional: string | null
+          tipo_consulta: string | null
+          email: string | null
+          convite_enviado: boolean | null
+          user_id: string | null
+          created_at: string
+          updated_at: string | null
+          motivo_cancelamento: string | null
+        }
+        Insert: {
+          id?: number
+          titulo?: string | null
+          descricao?: string | null
+          profissional_id?: number | null
+          cliente_id?: number | null
+          telefone?: string | null
+          data?: string | null
+          hora_inicio?: string | null
+          hora_termino?: string | null
+          cancelado?: boolean | null
+          cancelado_as?: string | null
+          duracao?: number | null
+          status?: string | null
+          nome_profissional?: string | null
+          tipo_consulta?: string | null
+          email?: string | null
+          convite_enviado?: boolean | null
+          user_id?: string | null
+          created_at?: string
+          updated_at?: string | null
+          motivo_cancelamento?: string | null
+        }
+        Update: {
+          id?: number
+          titulo?: string | null
+          descricao?: string | null
+          profissional_id?: number | null
+          cliente_id?: number | null
+          telefone?: string | null
+          data?: string | null
+          hora_inicio?: string | null
+          hora_termino?: string | null
+          cancelado?: boolean | null
+          cancelado_as?: string | null
+          duracao?: number | null
+          status?: string | null
+          nome_profissional?: string | null
+          tipo_consulta?: string | null
+          email?: string | null
+          convite_enviado?: boolean | null
+          user_id?: string | null
+          created_at?: string
+          updated_at?: string | null
+          motivo_cancelamento?: string | null
+        }
+      }
     }
     Views: {
       vw_profissionais: {
