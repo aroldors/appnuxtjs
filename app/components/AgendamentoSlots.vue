@@ -25,6 +25,7 @@
     :agendamento="agendamento"
     :anchor-rect="anchorRect"
     @close="showPopup = false"
+    @reagendar="(a) => { showPopup = false; emit('reagendar', a) }"
   />
 </template>
 
@@ -34,6 +35,12 @@ import AgendamentoDetalhePopup from '~/components/AgendamentoDetalhePopup.vue'
 import type { Database } from '~/types/database'
 
 type AgendamentoRow = Database['public']['Tables']['agendamentos']['Row']
+
+interface Emits {
+  (e: 'reagendar', agendamento: AgendamentoRow): void
+}
+
+const emit = defineEmits<Emits>()
 
 interface Props {
   agendamento: AgendamentoRow

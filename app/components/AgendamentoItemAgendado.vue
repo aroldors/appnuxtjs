@@ -19,6 +19,7 @@
         :key="agendamento.id"
         :agendamento="agendamento"
         :slot-height="slotHeight"
+        @reagendar="(a) => emit('reagendar', a)"
       />
     </div>
   </div>
@@ -30,6 +31,12 @@ import AgendamentoSlots from '~/components/AgendamentoSlots.vue'
 import type { Database } from '~/types/database'
 
 type AgendamentoRow = Database['public']['Tables']['agendamentos']['Row']
+
+interface Emits {
+  (e: 'reagendar', agendamento: AgendamentoRow): void
+}
+
+const emit = defineEmits<Emits>()
 
 interface Props {
   dia: Date

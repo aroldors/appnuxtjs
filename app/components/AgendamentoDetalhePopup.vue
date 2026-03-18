@@ -96,6 +96,7 @@
           <button
             type="button"
             class="flex-1 text-xs font-medium px-3 py-1.5 rounded-md border border-blue-400 text-blue-600 hover:bg-blue-50 transition-colors"
+            @click="emit('reagendar', props.agendamento)"
           >
             Reagendar
           </button>
@@ -150,6 +151,7 @@ interface Props {
 
 interface Emits {
   (e: 'close'): void
+  (e: 'reagendar', agendamento: AgendamentoRow): void
 }
 
 const props = defineProps<Props>()

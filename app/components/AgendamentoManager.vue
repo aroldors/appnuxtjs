@@ -35,6 +35,7 @@
               :dia="dia"
               :agendamentos="agendamentos"
               :slot-height="slotHeight"
+              @reagendar="onReagendar"
             />
           </div>
         </div>
@@ -45,8 +46,11 @@
   <!-- Modal de criação de agendamento -->
   <AgendamentoModal
     :open="showModal"
+    :is-edition="isEdition"
+    :is-rescheduling="isRescheduling"
+    :agendamento-id="selectedAgendamentoId"
     :existing-agendamentos="agendamentos"
-    @close="showModal = false"
+    @close="onModalClose"
     @saved="onSaved"
   />
 </template>
@@ -75,6 +79,9 @@ const agendamentos = ref<Database['public']['Tables']['agendamentos']['Row'][]>(
 const profissionalNaoEncontrado = ref(false)
 const profissionalId = ref<number | null>(null)
 const showModal = ref(false)
+const isEdition = ref(false)
+const isRescheduling = ref(false)
+const selectedAgendamentoId = ref<number | undefined>(undefined)
 
 function toLocalDateStr(date: Date): string {
   const y = date.getFullYear()
@@ -111,7 +118,24 @@ onMounted(() => {
 })
 
 function onNovo(): void {
+  isEdition.value = false
+  isRescheduling.value = false
+  selectedAgendamentoId.value = undefined
   showModal.value = true
+}
+
+function onReagendar(agendamento: Database['public']['Tables']['agendamentos']['Row']): void {
+  isEdition.value = false
+  isRescheduling.value = true
+  selectedAgendamentoId.value = agendamento.id
+  showModal.value = true
+}
+
+function onModalClose(): void {
+  showModal.value = false
+  isEdition.value = false
+  isRescheduling.value = false
+  selectedAgendamentoId.value = undefined
 }
 
 function onSaved(): void {

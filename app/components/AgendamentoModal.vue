@@ -1,9 +1,9 @@
 <template>
   <BaseModal
     :open="open"
-    :title="isEdition ? 'Editar Agendamento' : 'Novo Agendamento'"
+    :title="isRescheduling ? 'Reagendar Agendamento' : isEdition ? 'Editar Agendamento' : 'Novo Agendamento'"
     size="xl"
-    :confirm-text="isEdition ? 'Salvar Alterações' : 'Cadastrar'"
+    :confirm-text="isRescheduling ? 'Reagendar' : isEdition ? 'Salvar Alterações' : 'Cadastrar'"
     cancel-text="Cancelar"
     :loading="saving"
     :confirm-disabled="!canConfirm"
@@ -19,6 +19,7 @@
           label="Título"
           placeholder="Título do agendamento"
           required
+          :disabled="isRescheduling"
           :error-message="formErrors.titulo"
         />
       </div>
@@ -30,7 +31,7 @@
           label="Lead / Cliente"
           placeholder="Selecione um lead"
           :options="leadsOptions"
-          :disabled="loadingLeads"
+          :disabled="isRescheduling || loadingLeads"
           :error-message="formErrors.cliente_id"
         />
       </div>
@@ -98,7 +99,9 @@
           v-model="form.descricao"
           rows="3"
           placeholder="Observações ou descrição do agendamento"
+          :disabled="isRescheduling"
           class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:border-blue-500 focus:ring-blue-500 resize-none"
+          :class="isRescheduling ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''"
         />
       </div>
     </form>
@@ -124,6 +127,7 @@ type VwProfissionalRow = Database['public']['Views']['vw_profissionais']['Row']
 interface Props {
   open: boolean
   isEdition?: boolean
+  isRescheduling?: boolean
   agendamentoId?: number
   existingAgendamentos?: Database['public']['Tables']['agendamentos']['Row'][]
 }
@@ -135,6 +139,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   isEdition: false,
+  isRescheduling: false,
   existingAgendamentos: () => []
 })
 
@@ -229,8 +234,8 @@ const occupiedIntervals = computed(() => {
       // filtra por profissional e data
       if (a.profissional_id !== Number(form.profissional_id)) return false
       if (a.data !== form.data) return false
-      // se estivermos em edição, ignore o próprio agendamento para não bloquear seus horários
-      if (props.isEdition && props.agendamentoId != null && a.id === props.agendamentoId) return false
+      // se estivermos em edição ou reagendamento, ignore o próprio agendamento para não bloquear seus horários
+      if ((props.isEdition || props.isRescheduling) && props.agendamentoId != null && a.id === props.agendamentoId) return false
       return true
     })
     .map(a => ({ start: parseMinutes(a.hora_inicio), end: parseMinutes(a.hora_termino) }))
@@ -353,7 +358,32 @@ async function handleSubmit () {
 
   const profissionalSelecionado = profissionaisRaw.value.find(p => p.usuario_id === form.profissional_id)
 
-  if (props.isEdition && props.agendamentoId != null) {
+  if (props.isRescheduling && props.agendamentoId != null) {
+    // Computa a nota de reagendamento
+    const [year, month, day] = (form.data || '').split('-')
+    const dataFmt = year && month && day ? `${day}/${month}` : form.data
+    const horaFmt = form.hora_inicio ? `${form.hora_inicio}h` : ''
+    const nota = `Reagendado para ${dataFmt} às ${horaFmt}`
+    const descricaoAtualizada = form.descricao
+      ? `${form.descricao}\n${nota}`
+      : nota
+
+    const updates: AgendamentoUpdate = {
+      data: form.data || null,
+      hora_inicio: form.hora_inicio ?? null,
+      hora_termino: form.hora_termino ?? null,
+      profissional_id: form.profissional_id ?? null,
+      nome_profissional: profissionalSelecionado?.nome ?? null,
+      descricao: descricaoAtualizada
+    }
+    const result = await updateAgendamento(props.agendamentoId, updates)
+    if (result) {
+      toast.success('Agendamento reagendado com sucesso!')
+      emit('saved')
+    } else {
+      toast.error(agendamentoError.value ?? 'Erro ao reagendar. Tente novamente.')
+    }
+  } else if (props.isEdition && props.agendamentoId != null) {
     const updates: AgendamentoUpdate = {
       titulo: form.titulo.trim(),
       cliente_id: form.cliente_id ?? null,
@@ -406,7 +436,7 @@ watch(
 
     await Promise.all([loadLeads(), loadProfissionais()])
 
-    if (props.isEdition && props.agendamentoId != null) {
+    if ((props.isEdition || props.isRescheduling) && props.agendamentoId != null) {
       const agendamento = await fetchAgendamentoById(props.agendamentoId)
       if (agendamento) {
         populateForm(agendamento)
