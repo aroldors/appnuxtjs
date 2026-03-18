@@ -4,7 +4,7 @@
     class="absolute left-1 right-1 rounded overflow-hidden cursor-pointer border-l-4 shadow-sm transition-opacity hover:opacity-90"
     :class="estiloStatus.bg"
     :style="{ top: `${posicaoTopo}px`, height: `${altura}px`, minHeight: '20px' }"
-    :title="`${agendamento.titulo ?? ''} | ${horaTexto}${agendamento.descricao ? ' | ' + agendamento.descricao : ''}`"
+    @click.stop="onCardClick"
   >
     <div class="px-2 py-1 h-full flex flex-col overflow-hidden" :class="estiloStatus.text">
       <p class="text-xs font-semibold leading-tight truncate">{{ agendamento.titulo ?? '—' }}</p>
@@ -19,10 +19,18 @@
       </div>
     </div>
   </div>
+
+  <AgendamentoDetalhePopup
+    :open="showPopup"
+    :agendamento="agendamento"
+    :anchor-rect="anchorRect"
+    @close="showPopup = false"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
+import AgendamentoDetalhePopup from '~/components/AgendamentoDetalhePopup.vue'
 import type { Database } from '~/types/database'
 
 type AgendamentoRow = Database['public']['Tables']['agendamentos']['Row']
@@ -62,6 +70,23 @@ const horaTexto = computed(() => {
   if (inicio && fim) return `${inicio} – ${fim}`
   return inicio || '—'
 })
+
+const showPopup = ref(false)
+const anchorRect = ref<{ top: number; bottom: number; left: number; right: number; width: number; height: number } | null>(null)
+
+function onCardClick (event: MouseEvent) {
+  const el = (event.currentTarget as HTMLElement)
+  const rect = el.getBoundingClientRect()
+  anchorRect.value = {
+    top: rect.top,
+    bottom: rect.bottom,
+    left: rect.left,
+    right: rect.right,
+    width: rect.width,
+    height: rect.height
+  }
+  showPopup.value = true
+}
 
 const estiloStatus = computed(() => {
   const status = props.agendamento.status?.toLowerCase() ?? ''

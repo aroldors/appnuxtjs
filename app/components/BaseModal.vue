@@ -50,6 +50,7 @@
                 :variant="confirmVariant"
                 :loading="loading"
                 :loading-text="loadingText"
+                :disabled="props.confirmDisabled || loading"
                 @click="emit('confirm')"
               >
                 {{ confirmText }}
@@ -76,6 +77,7 @@ interface Props {
   loading?: boolean
   loadingText?: string
   disableBackdropClose?: boolean
+  confirmDisabled?: boolean
 }
 
 interface Emits {
@@ -92,6 +94,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   loadingText: 'Salvando...',
   disableBackdropClose: false
+  , confirmDisabled: false
 })
 
 const emit = defineEmits<Emits>()

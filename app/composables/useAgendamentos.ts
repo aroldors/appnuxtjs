@@ -100,6 +100,23 @@ export const useAgendamentos = () => {
   const insertAgendamento = async (agendamento: AgendamentoInsert): Promise<AgendamentoRow | null> => {
     error.value = null
     try {
+      // checagem de conflito: evita sobreposição para o mesmo profissional e data
+      if (agendamento.profissional_id != null && agendamento.data && agendamento.hora_inicio && agendamento.hora_termino) {
+        const { data: conflicts, error: confErr } = await supabase
+          .from('agendamentos')
+          .select('id')
+          .eq('profissional_id', agendamento.profissional_id)
+          .eq('data', agendamento.data)
+          .not('hora_termino', 'lte', agendamento.hora_inicio)
+          .not('hora_inicio', 'gte', agendamento.hora_termino)
+          .limit(1)
+
+        if (confErr) throw confErr
+        if (conflicts && (conflicts as any).length > 0) {
+          error.value = 'Conflito de horário com agendamento existente.'
+          return null
+        }
+      }
       const { data, error: sbError } = await supabase
         .from('agendamentos')
         .insert(agendamento)
@@ -127,6 +144,25 @@ export const useAgendamentos = () => {
       if (authError || !user) {
         error.value = 'Usuário não autenticado.'
         return null
+      }
+
+      // checagem de conflito para update: exclui o próprio registro
+      if (payload.profissional_id != null && payload.data && payload.hora_inicio && payload.hora_termino) {
+        const { data: conflicts, error: confErr } = await supabase
+          .from('agendamentos')
+          .select('id')
+          .eq('profissional_id', payload.profissional_id)
+          .eq('data', payload.data)
+          .not('hora_termino', 'lte', payload.hora_inicio)
+          .not('hora_inicio', 'gte', payload.hora_termino)
+          .neq('id', id)
+          .limit(1)
+
+        if (confErr) throw confErr
+        if (conflicts && (conflicts as any).length > 0) {
+          error.value = 'Conflito de horário com agendamento existente.'
+          return null
+        }
       }
 
       const { data, error: sbError } = await supabase

@@ -41,6 +41,14 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de criação de agendamento -->
+  <AgendamentoModal
+    :open="showModal"
+    :existing-agendamentos="agendamentos"
+    @close="showModal = false"
+    @saved="onSaved"
+  />
 </template>
 
 <script setup lang="ts">
@@ -55,6 +63,7 @@ import AgendamentoItemAgendado from '~/components/AgendamentoItemAgendado.vue'
 import BaseButton from '~/components/BaseButton.vue'
 import { useAgendamentosStore } from '~/stores/agendamentos'
 import { useAgendamentos } from '~/composables/useAgendamentos'
+import AgendamentoModal from '~/components/AgendamentoModal.vue'
 
 type VwProfissionalRow = Database['public']['Views']['vw_profissionais']['Row']
 
@@ -65,6 +74,7 @@ const { fetchAgendamentosByPeriodo } = useAgendamentos()
 const agendamentos = ref<Database['public']['Tables']['agendamentos']['Row'][]>([])
 const profissionalNaoEncontrado = ref(false)
 const profissionalId = ref<number | null>(null)
+const showModal = ref(false)
 
 function toLocalDateStr(date: Date): string {
   const y = date.getFullYear()
@@ -101,6 +111,11 @@ onMounted(() => {
 })
 
 function onNovo(): void {
-  // TODO: abrir modal de criação
+  showModal.value = true
+}
+
+function onSaved(): void {
+  showModal.value = false
+  carregarAgendamentos()
 }
 </script>
