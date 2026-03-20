@@ -191,6 +191,10 @@ export const useAgendamentos = () => {
     })
   }
 
+  const confirmarAgendamento = async (id: number): Promise<AgendamentoRow | null> => {
+    return updateAgendamento(id, { status: 'confirmado' })
+  }
+
   const deleteAgendamento = async (id: number): Promise<boolean> => {
     error.value = null
     try {
@@ -223,6 +227,7 @@ export const useAgendamentos = () => {
     insertAgendamento,
     updateAgendamento,
     cancelarAgendamento,
+    confirmarAgendamento,
     deleteAgendamento
   }
 }
