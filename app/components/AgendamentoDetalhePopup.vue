@@ -92,35 +92,109 @@
         </div>
 
         <!-- Rodapé -->
-        <div class="border-t border-gray-100 px-4 py-2.5 flex gap-2 bg-gray-50 rounded-b-xl">
-          <button
-            type="button"
-            class="flex-1 text-xs font-medium px-3 py-1.5 rounded-md border border-blue-400 text-blue-600 hover:bg-blue-50 transition-colors"
-            @click="emit('reagendar', props.agendamento)"
-          >
-            Reagendar
-          </button>
-          <button
-            type="button"
-            class="flex-1 text-xs font-medium px-3 py-1.5 rounded-md border border-yellow-400 text-yellow-600 hover:bg-yellow-50 transition-colors"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="flex-1 text-xs font-medium px-3 py-1.5 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
-          >
-            Excluir
-          </button>
+        <div class="border-t border-gray-100 px-4 py-3 bg-gray-50 rounded-b-xl">
+
+          <!-- Pendente: Confirmar + ícones Reagendar e Cancelar -->
+          <div v-if="statusGroup === 'pendente'" class="flex items-center gap-2">
+            <button
+              type="button"
+              :disabled="confirming"
+              class="flex-1 text-xs font-semibold px-3 py-1.5 rounded-lg border border-green-500 text-green-700 bg-green-50 hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              @click="handleConfirmar"
+            >
+              {{ confirming ? 'Confirmando…' : 'Confirmar' }}
+            </button>
+            <button
+              type="button"
+              title="Reagendar"
+              class="h-8 w-8 rounded-lg bg-blue-500 hover:bg-blue-600 flex items-center justify-center text-white transition-colors shrink-0"
+              @click="emit('reagendar', props.agendamento)"
+            >
+              <ArrowPathIcon class="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Cancelar agendamento"
+              class="h-8 w-8 rounded-lg bg-amber-400 hover:bg-amber-500 flex items-center justify-center text-white transition-colors shrink-0"
+              @click="showCancelModal = true"
+            >
+              <NoSymbolIcon class="h-4 w-4" />
+            </button>
+          </div>
+
+          <!-- Confirmado: apenas ícones Reagendar e Cancelar -->
+          <div v-else-if="statusGroup === 'confirmado'" class="flex items-center justify-center gap-3">
+            <button
+              type="button"
+              title="Reagendar"
+              class="h-8 w-8 rounded-lg bg-blue-500 hover:bg-blue-600 flex items-center justify-center text-white transition-colors"
+              @click="emit('reagendar', props.agendamento)"
+            >
+              <ArrowPathIcon class="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Cancelar agendamento"
+              class="h-8 w-8 rounded-lg bg-amber-400 hover:bg-amber-500 flex items-center justify-center text-white transition-colors"
+              @click="showCancelModal = true"
+            >
+              <NoSymbolIcon class="h-4 w-4" />
+            </button>
+          </div>
+
+          <!-- Finalizado / Concluído / Cancelado: apenas OK -->
+          <div v-else class="flex justify-center">
+            <button
+              type="button"
+              class="w-2/3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+              @click="emit('close')"
+            >
+              OK
+            </button>
+          </div>
+
         </div>
       </div>
     </Transition>
   </Teleport>
+
+  <!-- Modal de cancelamento -->
+  <BaseModal
+    :open="showCancelModal"
+    title="Cancelar agendamento"
+    confirm-text="Cancelar agendamento"
+    cancel-text="Voltar"
+    confirm-variant="danger"
+    :loading="canceling"
+    loading-text="Cancelando…"
+    size="sm"
+    @close="showCancelModal = false"
+    @confirm="handleCancelar"
+  >
+    <div class="space-y-4">
+      <p class="text-sm text-gray-600">
+        Informe o motivo do cancelamento abaixo. Esta ação não poderá ser desfeita.
+      </p>
+      <div class="space-y-1">
+        <label class="block text-sm font-medium text-gray-700">
+          Motivo <span class="text-red-500 ml-1">*</span>
+        </label>
+        <textarea
+          v-model="motivoCancelamento"
+          rows="3"
+          placeholder="Ex.: Cliente solicitou cancelamento..."
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none"
+        />
+      </div>
+    </div>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useSupabaseClient } from '#imports'
+import { useAgendamentos } from '~/composables/useAgendamentos'
+import BaseModal from '~/components/BaseModal.vue'
 import {
   ClockIcon,
   XMarkIcon,
@@ -128,7 +202,9 @@ import {
   TagIcon,
   UserIcon,
   BriefcaseIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
+  ArrowPathIcon,
+  NoSymbolIcon
 } from '@heroicons/vue/24/outline'
 import type { Database } from '~/types/database'
 
@@ -152,6 +228,8 @@ interface Props {
 interface Emits {
   (e: 'close'): void
   (e: 'reagendar', agendamento: AgendamentoRow): void
+  (e: 'confirmado', agendamento: AgendamentoRow): void
+  (e: 'cancelado', agendamento: AgendamentoRow): void
 }
 
 const props = defineProps<Props>()
@@ -159,8 +237,43 @@ const emit = defineEmits<Emits>()
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabase = useSupabaseClient() as any
+const { confirmarAgendamento, cancelarAgendamento } = useAgendamentos()
 
 const clienteNome = ref('—')
+const confirming = ref(false)
+const showCancelModal = ref(false)
+const motivoCancelamento = ref('')
+const canceling = ref(false)
+
+async function handleConfirmar () {
+  if (!props.agendamento?.id || confirming.value) return
+  confirming.value = true
+  try {
+    const updated = await confirmarAgendamento(props.agendamento.id)
+    if (updated) {
+      emit('confirmado', updated)
+      emit('close')
+    }
+  } finally {
+    confirming.value = false
+  }
+}
+
+async function handleCancelar () {
+  if (!props.agendamento?.id || canceling.value) return
+  canceling.value = true
+  try {
+    const updated = await cancelarAgendamento(props.agendamento.id, motivoCancelamento.value.trim() || undefined)
+    if (updated) {
+      emit('cancelado', updated)
+      emit('close')
+    }
+  } finally {
+    canceling.value = false
+    showCancelModal.value = false
+    motivoCancelamento.value = ''
+  }
+}
 
 const POPUP_WIDTH = 288
 const POPUP_ESTIMATED_HEIGHT = 400
@@ -287,6 +400,13 @@ const statusColor = computed(() => {
   return '#4f46e5'
 })
 
+const statusGroup = computed<'pendente' | 'confirmado' | 'closed'>(() => {
+  const s = props.agendamento.status?.toLowerCase() ?? ''
+  if (props.agendamento.cancelado || s === 'cancelado' || s === 'finalizado' || s === 'concluido' || s === 'concluído') return 'closed'
+  if (s === 'confirmado') return 'confirmado'
+  return 'pendente'
+})
+
 async function fetchClienteNome () {
   clienteNome.value = '—'
   if (!props.agendamento.cliente_id) return
@@ -307,6 +427,7 @@ watch(
   () => props.open,
   (isOpen) => {
     if (isOpen) fetchClienteNome()
+    else motivoCancelamento.value = ''
   }
 )
 </script>
