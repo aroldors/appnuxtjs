@@ -85,3 +85,27 @@ export interface FilterOptions {
   source?: string[]
   assignedUser?: string
 }
+
+export interface Oportunidade {
+  id: string
+  name: string
+  address?: string
+  number?: number
+  neighborhood?: string
+  city?: string
+  state?: string
+  zipCode?: string
+  phone?: string
+  email?: string
+  linkedin?: string
+  position?: string
+  businessSector?: string
+  opportunityValue: number
+  status: 'novo' | 'em-contato' | 'proposta-enviada' | 'fechado-ganho' | 'fechado-perdido'
+  source?: string
+  notes?: string
+  summary?: string
+  userId?: string
+  createdAt: Date
+  updatedAt: Date
+}

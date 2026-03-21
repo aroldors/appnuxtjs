@@ -20,10 +20,19 @@
         <NuxtLink
           to="/funil"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/funil') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          :class="isActivePath('/funil') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
         >
           <FunnelIcon class="mr-3 h-5 w-5" />
           Funil
+        </NuxtLink>
+
+        <NuxtLink
+          to="/oportunidades"
+          class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
+          :class="isActivePath('/oportunidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
+        >
+          <BriefcaseIcon class="mr-3 h-5 w-5" />
+          Oportunidades
         </NuxtLink>
 
         <NuxtLink
@@ -47,7 +56,7 @@
         <NuxtLink          
           to="/agendamentos"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/agendamentos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          :class="isActivePath('/agendamentos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
         >
           <CalendarDaysIcon class="mr-3 h-5 w-5" />
           Agendamentos
@@ -142,7 +151,8 @@
 <script setup lang="ts">
 import { 
   ChartBarIcon, 
-  FunnelIcon, 
+  FunnelIcon,
+  BriefcaseIcon,
   UsersIcon, 
   BuildingOfficeIcon,
   CalendarDaysIcon,

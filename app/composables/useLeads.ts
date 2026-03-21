@@ -59,6 +59,17 @@ export const useLeads = () => {
   }
 
   const updateLeadStatus = async (leadId: string, newStatus: Lead['status']) => {
+    const leadIndex = leads.value.findIndex(lead => lead.id === leadId)
+    const previousStatus = leads.value[leadIndex]?.status
+
+    if (leadIndex !== -1) {
+      leads.value[leadIndex] = {
+        ...leads.value[leadIndex],
+        status: newStatus,
+        updatedAt: new Date()
+      } as Lead
+    }
+
     const { error } = await supabase
       .from('leads')
       .update({ status: newStatus, updated_at: new Date().toISOString() })
@@ -66,16 +77,13 @@ export const useLeads = () => {
 
     if (error) {
       console.error('Erro ao atualizar status do lead:', error)
-      return
-    }
-
-    const leadIndex = leads.value.findIndex(lead => lead.id === leadId)
-    if (leadIndex !== -1) {
-      leads.value[leadIndex] = {
-        ...leads.value[leadIndex],
-        status: newStatus,
-        updatedAt: new Date()
-      } as Lead
+      if (leadIndex !== -1 && previousStatus) {
+        leads.value[leadIndex] = {
+          ...leads.value[leadIndex],
+          status: previousStatus,
+          updatedAt: new Date()
+        } as Lead
+      }
     }
   }
 
