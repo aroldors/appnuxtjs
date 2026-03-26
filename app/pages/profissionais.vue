@@ -1,8 +1,11 @@
 <template>
   <div class="space-y-4">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Profissionais</h1>
-      <span class="text-sm text-gray-500">Gerencie os profissionais cadastrados</span>
+    <div class="flex items-center gap-3">
+      <UserGroupIcon class="h-12 w-12 text-gray-700" />
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Profissionais</h1>
+        <span class="text-sm text-gray-500">Gerencie os profissionais cadastrados</span>
+      </div>
     </div>
 
     <!-- Filtro e ação -->
@@ -76,6 +79,7 @@ import ProfissionalViewModal from '../components/ProfissionalViewModal.vue'
 import ProfissionalModal from '../components/ProfissionalModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
 import { useProfissionais } from '../composables/useProfissionais'
+import { UserGroupIcon } from '@heroicons/vue/24/outline'
 
 const { profissionais, loading, currentPage, totalItems, pageSize, searchQuery, refreshProfissionais, fetchProfissionalById, deleteProfissional } = useProfissionais()
 const toast = useToast()

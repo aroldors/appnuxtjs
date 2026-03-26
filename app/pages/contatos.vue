@@ -1,8 +1,11 @@
 ﻿<template>
   <div class="space-y-4">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Contatos</h1>
-      <span class="text-sm text-gray-500">Gerencie seus contatos</span>
+    <div class="flex items-center gap-3">
+      <UsersIcon class="h-12 w-12 text-gray-700" />
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Contatos</h1>
+        <span class="text-sm text-gray-500">Gerencie seus contatos</span>
+      </div>
     </div>
 
     <!-- Filtro e acao -->
@@ -96,6 +99,7 @@ import ContactModal from '../components/ContactModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
 import ContactViewModal from '../components/ContactViewModal.vue'
 import { useContacts } from '../composables/useContacts'
+import { UsersIcon } from '@heroicons/vue/24/outline'
 import type { Database } from '../types/database'
 
 type VwContatosContasRow = Database['public']['Views']['vw_contatos_contas']['Row']

@@ -1,8 +1,11 @@
 <template>
   <div class="space-y-4">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Contas</h1>
-      <span class="text-sm text-gray-500">Gerencie suas contas</span>
+    <div class="flex items-center gap-3">
+      <BuildingOfficeIcon class="h-12 w-12 text-gray-700" />
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Contas</h1>
+        <span class="text-sm text-gray-500">Gerencie suas contas</span>
+      </div>
     </div>
 
     <!-- Filtro e ação -->
@@ -81,6 +84,7 @@ import ContasModal from '../components/ContasModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
 import ContaViewModal from '../components/ContaViewModal.vue'
 import { useContas } from '../composables/useContas'
+import { BuildingOfficeIcon } from '@heroicons/vue/24/outline'
 
 const { contas, loading, currentPage, totalItems, pageSize, searchQuery, refreshContas, deleteConta, fetchContaById } = useContas()
 const toast = useToast()

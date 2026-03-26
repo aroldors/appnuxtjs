@@ -1,8 +1,11 @@
 <template>
   <div class="space-y-4">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Especialidades</h1>
-      <span class="text-sm text-gray-500">Gerencie as especialidades</span>
+    <div class="flex items-center gap-3">
+      <AcademicCapIcon class="h-12 w-12 text-gray-700" />
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Especialidades</h1>
+        <span class="text-sm text-gray-500">Gerencie as especialidades</span>
+      </div>
     </div>
 
     <!-- Filtro e acao -->
@@ -76,6 +79,7 @@ import EspecialidadesModal from '../components/EspecialidadesModal.vue'
 import EspecialidadeViewModal from '../components/EspecialidadeViewModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
 import { useEspecialidades } from '../composables/useEspecialidades'
+import { AcademicCapIcon } from '@heroicons/vue/24/outline'
 
 definePageMeta({ layout: 'default' })
 
