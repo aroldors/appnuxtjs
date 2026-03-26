@@ -1,7 +1,19 @@
 <template>
   <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
     <div class="flex items-center justify-between px-6 h-[73px]">
-      <h1 class="text-2xl font-semibold text-gray-900">{{ pageTitle }}</h1>
+      <div class="flex items-center gap-3">
+        <button
+          id="sidebar-toggle-btn"
+          type="button"
+          class="p-1.5 text-gray-500 border border-gray-300 hover:text-blue-700 hover:border-blue-400 hover:bg-blue-50 transition-colors focus:outline-none"
+          style="border-radius: 5px;"
+          @click="toggle"
+          aria-label="Alternar menu lateral"
+        >
+          <Bars3Icon class="w-6 h-6" />
+        </button>
+        <h1 class="text-2xl font-semibold text-gray-900">{{ pageTitle }}</h1>
+      </div>
 
       <!-- User Menu -->
       <div class="relative" ref="menuRef">
@@ -83,11 +95,15 @@
 </template>
 
 <script setup lang="ts">
+import { Bars3Icon } from '@heroicons/vue/24/outline'
+import { useSidebar } from '~/composables/useSidebar'
+
 const route = useRoute()
 const router = useRouter()
 const { logout } = useAuth()
 const userStore = useUserStore()
 const { profile } = storeToRefs(userStore)
+const { toggle } = useSidebar()
 
 const dropdownOpen = ref(false)
 const menuRef = ref<HTMLElement | null>(null)

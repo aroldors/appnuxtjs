@@ -1,110 +1,163 @@
 <template>
-  <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
+  <aside
+    id="app-sidebar"
+    class="fixed inset-y-0 left-0 z-50 bg-white shadow-lg border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out"
+    :class="collapsed ? 'w-16' : 'w-64'"
+  >
     <!-- Logo -->
-    <div class="flex items-center justify-center h-[73px] border-b border-gray-200 px-4">
-      <img src="/Prospectra_Logo.png" alt="Prospectra" class="h-full w-full object-contain py-2" />
+    <div class="flex items-center h-[73px] border-b border-gray-200 px-3 overflow-hidden">
+      <img
+        v-if="!collapsed"
+        src="/Prospectra_Logo.png"
+        alt="Prospectra"
+        class="h-full w-full object-contain py-2"
+      />
+      <div v-else class="flex items-center justify-center w-full">
+        <img src="/Prospectra_Lupa.png" alt="Prospectra" class="h-9 w-9 object-contain" />
+      </div>
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="mt-6 px-3 flex-1">
+    <nav class="mt-6 px-2 flex-1 overflow-y-auto overflow-x-hidden">
       <div class="space-y-1">
         <NuxtLink
           to="/dashboard"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          :class="[
+            isActivePath('/dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Dashboard' : undefined"
         >
-          <ChartBarIcon class="mr-3 h-5 w-5" />
-          Dashboard
+          <ChartBarIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Dashboard</span>
         </NuxtLink>
 
         <NuxtLink
           to="/funil"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/funil') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/funil') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Funil' : undefined"
         >
-          <FunnelIcon class="mr-3 h-5 w-5" />
-          Funil
+          <FunnelIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Funil</span>
         </NuxtLink>
 
         <NuxtLink
           to="/oportunidades"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/oportunidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/oportunidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Oportunidades' : undefined"
         >
-          <BriefcaseIcon class="mr-3 h-5 w-5" />
-          Oportunidades
+          <BriefcaseIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Oportunidades</span>
         </NuxtLink>
 
         <NuxtLink
           to="/contatos"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/contatos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/contatos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Contatos' : undefined"
         >
-          <UsersIcon class="mr-3 h-5 w-5" />
-          Contatos
+          <UsersIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Contatos</span>
         </NuxtLink>
 
         <NuxtLink
           to="/contas"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/contas') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/contas') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Contas' : undefined"
         >
-          <BuildingOfficeIcon class="mr-3 h-5 w-5" />
-          Contas
+          <BuildingOfficeIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Contas</span>
         </NuxtLink>
 
-        <NuxtLink          
+        <NuxtLink
           to="/agendamentos"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/agendamentos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/agendamentos') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Agendamentos' : undefined"
         >
-          <CalendarDaysIcon class="mr-3 h-5 w-5" />
-          Agendamentos
+          <CalendarDaysIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Agendamentos</span>
         </NuxtLink>
 
-        <NuxtLink          to="/especialidades"
+        <NuxtLink
+          to="/especialidades"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/especialidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/especialidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Especialidades' : undefined"
         >
-          <AcademicCapIcon class="mr-3 h-5 w-5" />
-          Especialidades
+          <AcademicCapIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Especialidades</span>
         </NuxtLink>
 
         <NuxtLink
           to="/profissionais"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/profissionais') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/profissionais') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Profissionais' : undefined"
         >
-          <UserGroupIcon class="mr-3 h-5 w-5" />
-          Profissionais
+          <UserGroupIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Profissionais</span>
         </NuxtLink>
 
         <NuxtLink
           to="/mensagens"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/mensagens') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/mensagens') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Modelos de Mensagens' : undefined"
         >
-          <ChatBubbleLeftEllipsisIcon class="mr-3 h-5 w-5" />
-          Modelos de Mensagens
+          <ChatBubbleLeftEllipsisIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Modelos de Mensagens</span>
         </NuxtLink>
 
         <NuxtLink
           to="/configuracoes"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="isActivePath('/configuracoes') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-blue-50'"
+          :class="[
+            isActivePath('/configuracoes') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            collapsed ? 'justify-center' : ''
+          ]"
+          :title="collapsed ? 'Configurações' : undefined"
         >
-          <Cog6ToothIcon class="mr-3 h-5 w-5" />
-          Configurações
+          <Cog6ToothIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
+          <span v-if="!collapsed" class="truncate">Configurações</span>
         </NuxtLink>
       </div>
     </nav>
 
     <!-- Social Media Icons -->
-    <div class="px-6 py-4 border-t border-gray-200">
-      <div class="flex justify-center space-x-3">
+    <div class="px-3 py-4 border-t border-gray-200">
+      <div class="flex justify-center" :class="collapsed ? 'flex-col items-center space-y-2' : 'space-x-3'">
         <!-- Twitter -->
-        <a 
-          href="#" 
+        <a
+          href="#"
           class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-md transition-colors hover:bg-white hover:text-blue-600 hover:border hover:border-blue-600"
           title="Twitter"
         >
@@ -114,8 +167,8 @@
         </a>
 
         <!-- Facebook -->
-        <a 
-          href="#" 
+        <a
+          href="#"
           class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-md transition-colors hover:bg-white hover:text-blue-600 hover:border hover:border-blue-600"
           title="Facebook"
         >
@@ -125,8 +178,8 @@
         </a>
 
         <!-- LinkedIn -->
-        <a 
-          href="#" 
+        <a
+          href="#"
           class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-md transition-colors hover:bg-white hover:text-blue-600 hover:border hover:border-blue-600"
           title="LinkedIn"
         >
@@ -136,8 +189,8 @@
         </a>
 
         <!-- Email -->
-        <a 
-          href="#" 
+        <a
+          href="#"
           class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-md transition-colors hover:bg-white hover:text-blue-600 hover:border hover:border-blue-600"
           title="Email"
         >
@@ -149,21 +202,23 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  ChartBarIcon, 
+import {
+  ChartBarIcon,
   FunnelIcon,
   BriefcaseIcon,
-  UsersIcon, 
+  UsersIcon,
   BuildingOfficeIcon,
   CalendarDaysIcon,
   AcademicCapIcon,
   UserGroupIcon,
-  ChatBubbleLeftEllipsisIcon, 
+  ChatBubbleLeftEllipsisIcon,
   Cog6ToothIcon,
-  EnvelopeIcon 
+  EnvelopeIcon
 } from '@heroicons/vue/24/outline'
+import { useSidebar } from '~/composables/useSidebar'
 
 const route = useRoute()
+const { collapsed } = useSidebar()
 
 function isActivePath(path: string): boolean {
   return route.path === path

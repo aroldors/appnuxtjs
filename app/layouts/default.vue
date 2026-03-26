@@ -4,7 +4,10 @@
     <AppSidebar />
 
     <!-- Main Content -->
-    <div class="pl-64 flex flex-col h-screen">
+    <div
+      class="flex flex-col h-screen transition-all duration-300 ease-in-out"
+      :class="collapsed ? 'pl-16' : 'pl-64'"
+    >
       <!-- Header Component -->
       <AppHeader />
 
@@ -17,5 +20,7 @@
 </template>
 
 <script setup lang="ts">
-// No additional logic needed as components handle their own state
+import { useSidebar } from '~/composables/useSidebar'
+
+const { collapsed } = useSidebar()
 </script>
