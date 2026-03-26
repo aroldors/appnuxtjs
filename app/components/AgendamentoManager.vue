@@ -18,7 +18,7 @@
                 <template #icon>
                   <PlusIcon class="h-4 w-4 mr-1" />
                 </template>
-                Novo
+                Novo Agendamento
               </BaseButton>
             </div>
           </div>

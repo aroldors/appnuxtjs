@@ -1,11 +1,12 @@
 <template>
   <div class="space-y-4">
       <!-- Titulo do dashboard -->
-      <div class="bg-transparent px-0 pb-2">
-        <div class="mb-4">
+      <div class="flex items-center gap-3">
+        <ChartBarIcon class="h-12 w-12 text-gray-700" />
+        <div>
           <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
           <span class="text-sm text-gray-500">Visão geral do desempenho em vendas</span>
-        </div>
+        </div>      
       </div>
 
       <!-- Header com filtros -->
@@ -202,6 +203,7 @@
 
 <script setup lang="ts">
 import type { Lead } from '~~/shared/types'
+import { ChartBarIcon, UserGroupIcon } from '@heroicons/vue/24/outline'
 
 definePageMeta({
   layout: 'default'
