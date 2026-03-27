@@ -24,7 +24,7 @@
           to="/dashboard"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
-            isActivePath('/dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            isActivePath('/dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
             collapsed ? 'justify-center' : ''
           ]"
           :title="collapsed ? 'Dashboard' : undefined"
@@ -34,16 +34,16 @@
         </NuxtLink>
 
         <NuxtLink
-          to="/funil"
+          to="/leads"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
-            isActivePath('/funil') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
+            isActivePath('/leads') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
             collapsed ? 'justify-center' : ''
           ]"
-          :title="collapsed ? 'Funil' : undefined"
+          :title="collapsed ? 'Leads' : undefined"
         >
           <FunnelIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
-          <span v-if="!collapsed" class="truncate">Funil</span>
+          <span v-if="!collapsed" class="truncate">Leads</span>
         </NuxtLink>
 
         <NuxtLink
@@ -76,7 +76,7 @@
           to="/contas"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
-            isActivePath('/contas') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            isActivePath('/contas') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
             collapsed ? 'justify-center' : ''
           ]"
           :title="collapsed ? 'Contas' : undefined"
@@ -102,7 +102,7 @@
           to="/especialidades"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
-            isActivePath('/especialidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            isActivePath('/especialidades') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
             collapsed ? 'justify-center' : ''
           ]"
           :title="collapsed ? 'Especialidades' : undefined"
@@ -115,7 +115,7 @@
           to="/profissionais"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
-            isActivePath('/profissionais') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            isActivePath('/profissionais') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
             collapsed ? 'justify-center' : ''
           ]"
           :title="collapsed ? 'Profissionais' : undefined"
@@ -128,7 +128,7 @@
           to="/mensagens"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
-            isActivePath('/mensagens') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            isActivePath('/mensagens') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
             collapsed ? 'justify-center' : ''
           ]"
           :title="collapsed ? 'Modelos de Mensagens' : undefined"
@@ -141,7 +141,7 @@
           to="/configuracoes"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
-            isActivePath('/configuracoes') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+            isActivePath('/configuracoes') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
             collapsed ? 'justify-center' : ''
           ]"
           :title="collapsed ? 'Configurações' : undefined"
