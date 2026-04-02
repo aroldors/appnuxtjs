@@ -4,9 +4,9 @@
     class="relative flex-1 overflow-hidden bg-indigo-50/50"
     :style="{ height: `${alturaTotal}px` }"
   >
-    <!-- Grade de horas (06h–22h) -->
+    <!-- Grade de horas (08h–19h) -->
     <div
-      v-for="hora in 17"
+      v-for="hora in 12"
       :key="hora"
       class="border-b border-gray-100"
       :style="{ height: `${slotHeight}px` }"
@@ -49,7 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
   slotHeight: 160
 })
 
-const alturaTotal = computed(() => props.slotHeight * 17) // 06h a 22h = 17 slots
+const alturaTotal = computed(() => props.slotHeight * 12) // 08h a 19h = 12 slots
 
 function toLocalDateStr(date: Date): string {
   const y = date.getFullYear()

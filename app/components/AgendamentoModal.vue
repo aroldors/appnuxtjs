@@ -191,12 +191,12 @@ const minDate = computed(() => {
 // armazena última data válida para evitar que usuário digite data passada
 const lastValidDate = ref<string | null>(null)
 
-// Opções de horários (intervalos de 30 min, das 06:00 às 22:00)
+// Opções de horários (intervalos de 30 min, das 08:00 às 19:00)
 const horasOptions = computed<DropdownOption[]>(() => {
   const options: DropdownOption[] = []
-  for (let h = 6; h <= 22; h++) {
+  for (let h = 8; h <= 19; h++) {
     for (const m of [0, 30]) {
-      if (h === 22 && m === 30) break
+      if (h === 19 && m === 30) break
       const hour = String(h).padStart(2, '0')
       const min = String(m).padStart(2, '0')
       const time = `${hour}:${min}`

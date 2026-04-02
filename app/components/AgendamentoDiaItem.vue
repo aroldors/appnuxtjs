@@ -3,8 +3,8 @@
     id="agendamento-dia-item"
     class="flex flex-col items-center justify-center gap-0.5 py-2 rounded-t-lg bg-indigo-50/50 cursor-pointer transition-colors duration-150 hover:bg-indigo-50"
   >
-    <span class="text-sm font-bold text-indigo-800 leading-none">{{ numeroDia }}</span>
-    <span class="text-xs text-indigo-400 capitalize">{{ nomeDia }}</span>
+    <span class="text-xl font-bold text-indigo-800 leading-none">{{ numeroDia }}</span>
+    <span class="text-sm text-indigo-400 capitalize">{{ nomeDia }}</span>
   </div>
 </template>
 

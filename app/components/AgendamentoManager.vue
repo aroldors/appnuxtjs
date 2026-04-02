@@ -14,7 +14,7 @@
             <AgendamentoControle class="col-start-1 justify-self-start" />
             <AgendamentoProfissional class="col-start-2 justify-self-center" @loaded="onProfissionalLoaded" />
             <div class="col-start-3 justify-self-end">
-              <BaseButton variant="primary" size="sm" @click="onNovo">
+              <BaseButton variant="primary" size="md" @click="onNovo">
                 <template #icon>
                   <PlusIcon class="h-4 w-4 mr-1" />
                 </template>

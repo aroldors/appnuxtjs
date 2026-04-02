@@ -76,7 +76,7 @@ function parseMinutes(time: string | null): number {
   return parseInt(parts[0] ?? '0', 10) * 60 + parseInt(parts[1] ?? '0', 10)
 }
 
-const offsetInicio = 6 * 60 // grade começa às 06h
+const offsetInicio = 8 * 60 // grade começa às 08h
 
 const posicaoTopo = computed(() => {
   const minutos = parseMinutes(localAgendamento.value.hora_inicio) - offsetInicio
