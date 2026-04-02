@@ -23,6 +23,7 @@
           </svg>
         </div>
         <button
+          v-if="isAdmin"
           @click="openNew"
           class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
         >
@@ -40,6 +41,7 @@
       :current-page="currentPage"
       :total-items="totalItems"
       :page-size="pageSize"
+      :read-only="!isAdmin"
       @edit="onEdit"
       @delete="onDelete"
       @view="onView"
@@ -79,9 +81,14 @@ import EspecialidadesModal from '../components/EspecialidadesModal.vue'
 import EspecialidadeViewModal from '../components/EspecialidadeViewModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
 import { useEspecialidades } from '../composables/useEspecialidades'
+import { useUserStore } from '../stores/user'
 import { AcademicCapIcon } from '@heroicons/vue/24/outline'
 
 definePageMeta({ layout: 'default' })
+
+const userStore = useUserStore()
+const { profile } = storeToRefs(userStore)
+const isAdmin = computed(() => profile.value?.role === 'admin')
 
 const { especialidades, loading, currentPage, totalItems, pageSize, searchQuery, refreshEspecialidades, deleteEspecialidade, fetchEspecialidadeById } = useEspecialidades()
 const toast = useToast()

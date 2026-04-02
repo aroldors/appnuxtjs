@@ -23,6 +23,7 @@
           </svg>
         </div>
         <button
+          v-if="isAdmin"
           class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
           @click="openNew"
         >
@@ -40,6 +41,7 @@
       :current-page="currentPage"
       :total-items="totalItems"
       :page-size="pageSize"
+      :read-only="!isAdmin"
       @edit="onEdit"
       @delete="onDelete"
       @view="onView"
@@ -79,7 +81,12 @@ import ProfissionalViewModal from '../components/ProfissionalViewModal.vue'
 import ProfissionalModal from '../components/ProfissionalModal.vue'
 import ConfirmModal from '../components/ConfirmModal.vue'
 import { useProfissionais } from '../composables/useProfissionais'
+import { useUserStore } from '../stores/user'
 import { UserGroupIcon } from '@heroicons/vue/24/outline'
+
+const userStore = useUserStore()
+const { profile } = storeToRefs(userStore)
+const isAdmin = computed(() => profile.value?.role === 'admin')
 
 const { profissionais, loading, currentPage, totalItems, pageSize, searchQuery, refreshProfissionais, fetchProfissionalById, deleteProfissional } = useProfissionais()
 const toast = useToast()

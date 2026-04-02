@@ -144,6 +144,16 @@ export const useAuth = () => {
     }
   }
 
+  const isAdmin = async (): Promise<boolean> => {
+    try {
+      const { data, error } = await (supabase as any).rpc('is_admin')
+      if (error) return false
+      return data === true
+    } catch {
+      return false
+    }
+  }
+
   const logout = async () => {
     loading.value = true
     
@@ -169,6 +179,7 @@ export const useAuth = () => {
     logout,
     changePassword,
     requestPasswordReset,
-    updateProfile
+    updateProfile,
+    isAdmin
   }
 }

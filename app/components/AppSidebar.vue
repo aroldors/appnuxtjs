@@ -125,19 +125,7 @@
         </NuxtLink>
 
         <NuxtLink
-          to="/mensagens"
-          class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          :class="[
-            isActivePath('/mensagens') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-blue-900 hover:bg-blue-50',
-            collapsed ? 'justify-center' : ''
-          ]"
-          :title="collapsed ? 'Modelos de Mensagens' : undefined"
-        >
-          <ChatBubbleLeftEllipsisIcon class="h-5 w-5 shrink-0" :class="collapsed ? '' : 'mr-3'" />
-          <span v-if="!collapsed" class="truncate">Modelos de Mensagens</span>
-        </NuxtLink>
-
-        <NuxtLink
+          v-if="isAdmin"
           to="/configuracoes"
           class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
           :class="[
@@ -211,14 +199,17 @@ import {
   CalendarDaysIcon,
   AcademicCapIcon,
   UserGroupIcon,
-  ChatBubbleLeftEllipsisIcon,
   Cog6ToothIcon,
   EnvelopeIcon
 } from '@heroicons/vue/24/outline'
 import { useSidebar } from '~/composables/useSidebar'
+import { useUserStore } from '~/stores/user'
 
 const route = useRoute()
 const { collapsed } = useSidebar()
+const userStore = useUserStore()
+const { profile } = storeToRefs(userStore)
+const isAdmin = computed(() => profile.value?.role === 'admin')
 
 function isActivePath(path: string): boolean {
   return route.path === path
