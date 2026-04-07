@@ -22,13 +22,13 @@
           <button
             id="user-menu-trigger"
             type="button"
-            class="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-100 transition-colors focus:outline-none"
+            class="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:text-blue-900 hover:bg-blue-50 transition-colors focus:outline-none"
             @click="dropdownOpen = !dropdownOpen"
           >
             <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center shrink-0">
               <span class="text-sm font-medium text-gray-700">{{ userInitials }}</span>
             </div>
-            <span class="text-sm font-medium text-gray-900">{{ profile?.nome || 'Usuário' }}</span>
+            <span class="text-sm font-medium text-gray-900">{{ userGreeting }}</span>
             <svg
               class="w-4 h-4 text-gray-400 transition-transform duration-200"
               :class="{ 'rotate-180': dropdownOpen }"
@@ -48,7 +48,7 @@
               <!-- Welcome -->
               <div class="px-4 py-2.5 border-b border-gray-100">
                 <p class="text-xs text-gray-400">Bem-vindo de volta!</p>
-                <p class="text-sm font-semibold text-gray-800 truncate">{{ profile?.nome || 'Usuário' }}</p>
+                <p class="text-sm font-semibold text-gray-800 truncate">{{ userName }}</p>
               </div>
 
               <!-- Items -->
@@ -97,6 +97,7 @@
 <script setup lang="ts">
 import { Bars3Icon } from '@heroicons/vue/24/outline'
 import { useSidebar } from '~/composables/useSidebar'
+import { formatUserGreeting, formatShortName } from '~/utils/formatName'
 
 const route = useRoute()
 const router = useRouter()
@@ -111,15 +112,22 @@ const menuRef = ref<HTMLElement | null>(null)
 const pageTitle = computed(() => {
   const titles: Record<string, string> = {
     '/dashboard': 'Dashboard',
-    '/funil': 'Funil de Vendas',
+    '/leads': 'Leads',
     '/contatos': 'Contatos',
     '/mensagens': 'Modelos de Mensagens',
     '/configuracoes': 'Configurações',
     '/perfil': 'Meu Perfil',
+    '/oportunidades': 'Oportunidades',
+    '/agendamentos': 'Agendamentos',
+    '/especialidades': 'Especialidades',
+    '/profissionais': 'Profissionais',
     '/teste': 'Teste de Componentes'
   }
   return titles[route.path] || 'Prospectra'
 })
+
+const userGreeting = computed(() => formatUserGreeting(profile.value?.nome))
+const userName = computed(() => formatShortName(profile.value?.nome))
 
 const userInitials = computed(() => {
   if (!profile.value?.nome) return 'U'
